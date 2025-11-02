@@ -1,0 +1,313 @@
+//
+//  GameManager.swift
+//  Yaniv Counter
+//
+//  Created by Yuvaansh Gandhi on 2025-11-02.
+//
+
+import Foundation
+import SwiftUI
+import UIKit
+
+@Observable
+class GameManager {
+    var players: [Player] = []
+    var targetScore: Int = 200
+    var currentRound: Int = 0
+    var gamePhase: GamePhase = .setup
+    var roundHistory: [RoundHistory] = []
+    var winner: Player?
+    var gameSettings: GameSettings = GameSettings()
+    var gameHistory: [Game] = []
+    
+    private let playersKey = "yaniv_players"
+    private let targetScoreKey = "yaniv_target_score"
+    private let currentRoundKey = "yaniv_current_round"
+    private let gamePhaseKey = "yaniv_game_phase"
+    private let roundHistoryKey = "yaniv_round_history"
+    private let gameSettingsKey = "yaniv_game_settings"
+    private let gameHistoryKey = "yaniv_game_history"
+    
+    init() {
+        loadGameState()
+    }
+    
+    // MARK: - Game Setup
+    
+    func startNewGame(targetScore: Int, playerNames: [String], settings: GameSettings = GameSettings()) {
+        self.targetScore = targetScore
+        self.players = playerNames.map { Player(name: $0, score: 0) }
+        self.currentRound = 0
+        self.gamePhase = .playing
+        self.roundHistory = []
+        self.winner = nil
+        self.gameSettings = settings
+        saveGameState()
+    }
+    
+    func resetGame() {
+        let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner)
+        gameHistory.append(game)
+        
+        players = []
+        targetScore = 200
+        currentRound = 0
+        gamePhase = .setup
+        roundHistory = []
+        winner = nil
+        gameSettings = GameSettings()
+        saveGameState()
+    }
+    
+    // MARK: - Player Management
+    
+    func addPlayer(_ name: String) {
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        let player = Player(name: name.trimmingCharacters(in: .whitespaces))
+        players.append(player)
+        saveGameState()
+    }
+    
+    func removePlayer(_ player: Player) {
+        players.removeAll { $0.id == player.id }
+        saveGameState()
+    }
+    
+    // MARK: - Scoring
+    
+    func addRound(scoreChanges: [UUID: Int]) {
+        guard gamePhase == .playing else { return }
+        
+        currentRound += 1
+        var roundScoreChanges: [PlayerScoreChange] = []
+        var eliminatedPlayers: [Player] = []
+        
+        for (playerId, points) in scoreChanges {
+            guard let playerIndex = players.firstIndex(where: { $0.id == playerId }),
+                  points >= 0 else { continue }
+            
+            let player = players[playerIndex]
+            let oldScore = player.score
+            let wasEliminatedBefore = player.isEliminated
+            var newScore = oldScore + points
+            
+            // Check if player crosses elimination threshold
+            let crossesEliminationThreshold = !wasEliminatedBefore && newScore > targetScore
+            
+            // Track bonus reduction if applied
+            var bonusReduction: Int? = nil
+            
+            // If player crosses elimination threshold, eliminate them immediately (no penalties)
+            if crossesEliminationThreshold {
+                players[playerIndex].score = newScore
+                players[playerIndex].isEliminated = true
+            } else if !wasEliminatedBefore {
+                // Player is still active, check for penalties
+                if gameSettings.penaltyEnabled {
+                    let interval = gameSettings.penaltyInterval.rawValue
+                    
+                    // Check if player's score is exactly at a threshold (50, 100, 150, etc.)
+                    // Penalty applies only when score is exactly a multiple of the interval
+                    let isAtThreshold = newScore % interval == 0 && newScore > 0
+                    let wasAtThreshold = oldScore % interval == 0 && oldScore > 0
+                    
+                    // Apply penalty if player reached a threshold (is exactly at it now, but wasn't before)
+                    // Example: oldScore 49, newScore 50 -> penalty applies (reached 50)
+                    // Example: oldScore 49, newScore 51 -> no penalty (not exactly at 50)
+                    // Example: oldScore 50, newScore 51 -> no penalty (already past threshold)
+                    // Example: oldScore 99, newScore 100 -> penalty applies (reached 100)
+                    if isAtThreshold && !wasAtThreshold {
+                        // Calculate penalty reduction based on the threshold reached
+                        let penaltyAmount: Int
+                        switch gameSettings.penaltyReduction {
+                        case .fixed(let amount):
+                            penaltyAmount = amount
+                        case .half:
+                            penaltyAmount = newScore / 2
+                        }
+                        
+                        // Track the reduction amount for history
+                        bonusReduction = penaltyAmount
+                        
+                        // Apply penalty (ensure score doesn't go below 0)
+                        newScore = max(0, newScore - penaltyAmount)
+                    }
+                }
+                
+                // Update player score
+                players[playerIndex].score = newScore
+                
+                // Double-check elimination after penalty (in case penalty somehow didn't prevent crossing threshold)
+                // This should be rare but handles edge cases
+                if newScore > targetScore {
+                    players[playerIndex].isEliminated = true
+                }
+            } else {
+                // Player was already eliminated, just update score without penalties
+                players[playerIndex].score = newScore
+            }
+            
+            // Track if elimination happened in this round
+            let wasEliminated = !wasEliminatedBefore && players[playerIndex].isEliminated
+            
+            // Calculate points shown in history (net change)
+            let pointsDisplayed = newScore - oldScore
+            
+            roundScoreChanges.append(
+                PlayerScoreChange(
+                    playerId: playerId,
+                    playerName: player.name,
+                    pointsAdded: pointsDisplayed,
+                    wasEliminated: wasEliminated,
+                    bonusReduction: bonusReduction
+                )
+            )
+            
+            if wasEliminated {
+                eliminatedPlayers.append(players[playerIndex])
+            }
+        }
+        
+        let history = RoundHistory(
+            roundNumber: currentRound,
+            scoreChanges: roundScoreChanges
+        )
+        roundHistory.append(history)
+        
+        checkGameEnd()
+        saveGameState()
+        
+        // Haptic feedback for eliminations
+        if !eliminatedPlayers.isEmpty {
+            HapticHelper.notification(.warning)
+        }
+    }
+    
+    func undoLastRound() {
+        guard let lastRound = roundHistory.last else { return }
+        
+        // Reverse score changes
+        for scoreChange in lastRound.scoreChanges {
+            if let playerIndex = players.firstIndex(where: { $0.id == scoreChange.playerId }) {
+                players[playerIndex].score = max(0, players[playerIndex].score - scoreChange.pointsAdded)
+                
+                // Restore elimination status if player was eliminated in this round
+                if scoreChange.wasEliminated {
+                    players[playerIndex].isEliminated = false
+                }
+            }
+        }
+        
+        roundHistory.removeLast()
+        currentRound = max(0, currentRound - 1)
+        
+        // Check if game should still be finished
+        if gamePhase == .finished {
+            checkGameEnd()
+        }
+        
+        saveGameState()
+    }
+    
+    private func checkGameEnd() {
+        let activePlayers = players.filter { !$0.isEliminated }
+        
+        if activePlayers.count == 1 {
+            gamePhase = .finished
+            winner = activePlayers.first
+            
+            // Haptic feedback for winner
+            HapticHelper.notification(.success)
+        } else if activePlayers.isEmpty {
+            gamePhase = .finished
+            // All players eliminated - use player with lowest score
+            winner = players.min(by: { $0.score < $1.score })
+        }
+    }
+    
+    func getActivePlayers() -> [Player] {
+        players.filter { !$0.isEliminated }
+    }
+    
+    func getEliminatedPlayers() -> [Player] {
+        players.filter { $0.isEliminated }
+    }
+    
+    func deleteGame(_ game: Game) {
+        gameHistory.removeAll { $0.id == game.id }
+        saveGameState()
+    }
+    
+    // MARK: - Persistence
+    
+    private func saveGameState() {
+        // Save players
+        if let encoded = try? JSONEncoder().encode(players) {
+            UserDefaults.standard.set(encoded, forKey: playersKey)
+        }
+        
+        // Save other state
+        UserDefaults.standard.set(targetScore, forKey: targetScoreKey)
+        UserDefaults.standard.set(currentRound, forKey: currentRoundKey)
+        UserDefaults.standard.set(gamePhase.rawValue, forKey: gamePhaseKey)
+        
+        // Save round history
+        if let encoded = try? JSONEncoder().encode(roundHistory) {
+            UserDefaults.standard.set(encoded, forKey: roundHistoryKey)
+        }
+        
+        // Save game settings
+        if let encoded = try? JSONEncoder().encode(gameSettings) {
+            UserDefaults.standard.set(encoded, forKey: gameSettingsKey)
+        }
+        
+        // Save game history
+        if let encoded = try? JSONEncoder().encode(gameHistory) {
+            UserDefaults.standard.set(encoded, forKey: gameHistoryKey)
+        }
+    }
+    
+    private func loadGameState() {
+        // Load players
+        if let data = UserDefaults.standard.data(forKey: playersKey),
+           let decoded = try? JSONDecoder().decode([Player].self, from: data) {
+            players = decoded
+        }
+        
+        // Load other state
+        targetScore = UserDefaults.standard.integer(forKey: targetScoreKey)
+        if targetScore == 0 { targetScore = 200 } // Default
+        
+        currentRound = UserDefaults.standard.integer(forKey: currentRoundKey)
+        
+        if let phaseRaw = UserDefaults.standard.string(forKey: gamePhaseKey),
+           let phase = GamePhase(rawValue: phaseRaw) {
+            gamePhase = phase
+        }
+        
+        // Load round history
+        if let data = UserDefaults.standard.data(forKey: roundHistoryKey),
+           let decoded = try? JSONDecoder().decode([RoundHistory].self, from: data) {
+            roundHistory = decoded
+        }
+        
+        // Load game settings
+        if let data = UserDefaults.standard.data(forKey: gameSettingsKey),
+           let decoded = try? JSONDecoder().decode(GameSettings.self, from: data) {
+            gameSettings = decoded
+        }
+        
+        // Load game history
+        if let data = UserDefaults.standard.data(forKey: gameHistoryKey),
+            let decoded = try? JSONDecoder().decode([Game].self, from: data) {
+            gameHistory = decoded
+        }
+        
+        // Restore winner if game is finished
+        if gamePhase == .finished {
+            checkGameEnd()
+        }
+    }
+}
+
+
