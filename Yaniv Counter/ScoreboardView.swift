@@ -12,6 +12,7 @@ struct ScoreboardView: View {
     @State private var showAddRound = false
     @State private var showHistory = false
     @State private var showStatistics = false
+    @State private var showingEndGameConfirmation = false
     
     var body: some View {
         ZStack {
@@ -39,7 +40,7 @@ struct ScoreboardView: View {
                                 Label("Pause and Go Home", systemImage: "pause.circle")
                             }
                             Button(role: .destructive, action: {
-                                gameManager.endGame()
+                                showingEndGameConfirmation = true
                             }) {
                                 Label("End Game", systemImage: "flag.fill")
                             }
@@ -47,6 +48,14 @@ struct ScoreboardView: View {
                             Image(systemName: "ellipsis.circle")
                                 .font(.system(size: 24))
                                 .foregroundColor(.primary)
+                        }
+                        .alert("End Game?", isPresented: $showingEndGameConfirmation) {
+                            Button("Cancel", role: .cancel) { }
+                            Button("End Game", role: .destructive) {
+                                gameManager.endGame()
+                            }
+                        } message: {
+                            Text("The player with the lowest score will be declared the winner.")
                         }
                     }
                     .padding(.horizontal, 20)

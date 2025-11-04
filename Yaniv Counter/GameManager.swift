@@ -66,9 +66,18 @@ class GameManager {
     }
     
     func endGame() {
+        // Determine the winner: the active player with the lowest score
+        let activePlayers = getActivePlayers()
+        if let gameWinner = activePlayers.min(by: { $0.score < $1.score }) {
+            self.winner = gameWinner
+        }
+        
+        self.gamePhase = .finished
+        
         let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
         gameHistory.append(game)
-        resetGame()
+        // Do not reset the game state immediately, so the UI can update
+        // resetGame() 
         saveGameState()
     }
     
