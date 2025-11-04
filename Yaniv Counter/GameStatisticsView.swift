@@ -15,11 +15,6 @@ struct GameStatisticsView: View {
             LiquidGlassBackground(color: .orange, intensity: 0.5)
             
             VStack {
-                Text("Game Statistics")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding()
-                
                 List {
                     ForEach(game.players) { player in
                         PlayerGameStatsCard(player: player, game: game)

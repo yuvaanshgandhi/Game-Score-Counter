@@ -36,17 +36,12 @@ struct StatisticsView: View {
                 globalStatistics
             }
         }
-        .navigationTitle("Statistics")
+        .navigationTitle("Global Statistics")
         .navigationBarTitleDisplayMode(.inline)
     }
     
     private var globalStatistics: some View {
         VStack {
-            Text("Global Statistics")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
             List {
                 let allPlayers = gameHistory.flatMap { $0.players }.reduce(into: [String: Player]()) { result, player in
                     result[player.name] = player

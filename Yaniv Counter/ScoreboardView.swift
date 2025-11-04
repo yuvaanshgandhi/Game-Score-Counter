@@ -34,11 +34,6 @@ struct ScoreboardView: View {
                         
                         Menu {
                             Button(action: {
-                                showStatistics = true
-                            }) {
-                                Label("Statistics", systemImage: "chart.bar.xaxis")
-                            }
-                            Button(action: {
                                 gameManager.pauseGame()
                             }) {
                                 Label("Pause and Go Home", systemImage: "pause.circle")
