@@ -19,6 +19,7 @@ class GameManager {
     var winner: Player?
     var gameSettings: GameSettings = GameSettings()
     var gameHistory: [Game] = []
+    var ongoingGames: [Game] = []
     
     private let playersKey = "yaniv_players"
     private let targetScoreKey = "yaniv_target_score"
@@ -27,6 +28,7 @@ class GameManager {
     private let roundHistoryKey = "yaniv_round_history"
     private let gameSettingsKey = "yaniv_game_settings"
     private let gameHistoryKey = "yaniv_game_history"
+    private let ongoingGamesKey = "yaniv_ongoing_games"
     
     init() {
         loadGameState()
@@ -46,9 +48,6 @@ class GameManager {
     }
     
     func resetGame() {
-        let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner)
-        gameHistory.append(game)
-        
         players = []
         targetScore = 200
         currentRound = 0
@@ -56,6 +55,37 @@ class GameManager {
         roundHistory = []
         winner = nil
         gameSettings = GameSettings()
+        saveGameState()
+    }
+    
+    func pauseGame() {
+        let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+        ongoingGames.append(game)
+        resetGame()
+        saveGameState()
+    }
+    
+    func endGame() {
+        let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+        gameHistory.append(game)
+        resetGame()
+        saveGameState()
+    }
+    
+    func loadGame(game: Game) {
+        self.players = game.players
+        self.targetScore = game.targetScore
+        self.roundHistory = game.roundHistory
+        self.winner = game.winner
+        self.gameSettings = game.gameSettings
+        self.currentRound = game.roundHistory.count
+        self.gamePhase = .playing
+        ongoingGames.removeAll { $0.id == game.id }
+        saveGameState()
+    }
+    
+    func deleteOngoingGame(_ game: Game) {
+        ongoingGames.removeAll { $0.id == game.id }
         saveGameState()
     }
     
@@ -251,6 +281,11 @@ class GameManager {
         if let encoded = try? JSONEncoder().encode(gameHistory) {
             UserDefaults.standard.set(encoded, forKey: gameHistoryKey)
         }
+        
+        // Save ongoing games
+        if let encoded = try? JSONEncoder().encode(ongoingGames) {
+            UserDefaults.standard.set(encoded, forKey: ongoingGamesKey)
+        }
     }
     
     private func loadGameState() {
@@ -287,6 +322,12 @@ class GameManager {
         if let data = UserDefaults.standard.data(forKey: gameHistoryKey),
             let decoded = try? JSONDecoder().decode([Game].self, from: data) {
             gameHistory = decoded
+        }
+        
+        // Load ongoing games
+        if let data = UserDefaults.standard.data(forKey: ongoingGamesKey),
+            let decoded = try? JSONDecoder().decode([Game].self, from: data) {
+            ongoingGames = decoded
         }
         
         // Restore winner if game is finished

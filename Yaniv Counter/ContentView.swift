@@ -22,6 +22,9 @@ struct ContentView: View {
             case .finished:
                 WinnerView(gameManager: gameManager)
                     .id("finished")
+            case .paused:
+                WelcomeView(gameManager: gameManager)
+                    .id("paused")
             }
         }
         .animation(.easeInOut(duration: 0.3), value: gameManager.gamePhase)

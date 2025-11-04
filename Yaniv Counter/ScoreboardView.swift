@@ -38,10 +38,15 @@ struct ScoreboardView: View {
                             }) {
                                 Label("Statistics", systemImage: "chart.bar.xaxis")
                             }
-                            Button(role: .destructive, action: {
-                                gameManager.resetGame()
+                            Button(action: {
+                                gameManager.pauseGame()
                             }) {
-                                Label("New Game", systemImage: "arrow.counterclockwise")
+                                Label("Pause and Go Home", systemImage: "pause.circle")
+                            }
+                            Button(role: .destructive, action: {
+                                gameManager.endGame()
+                            }) {
+                                Label("End Game", systemImage: "flag.fill")
                             }
                         } label: {
                             Image(systemName: "ellipsis.circle")

@@ -57,6 +57,7 @@ enum GamePhase: String, Codable {
     case setup
     case playing
     case finished
+    case paused
 }
 
 enum PenaltyInterval: Int, Codable, CaseIterable {
@@ -89,18 +90,20 @@ struct Game: Identifiable, Codable, Equatable {
     let targetScore: Int
     let roundHistory: [RoundHistory]
     let winner: Player?
+    let gameSettings: GameSettings
     
-    init(id: UUID = UUID(), date: Date = Date(), players: [Player], targetScore: Int, roundHistory: [RoundHistory], winner: Player?) {
+    init(id: UUID = UUID(), date: Date = Date(), players: [Player], targetScore: Int, roundHistory: [RoundHistory], winner: Player?, gameSettings: GameSettings = GameSettings()) {
         self.id = id
         self.date = date
         self.players = players
         self.targetScore = targetScore
         self.roundHistory = roundHistory
         self.winner = winner
+        self.gameSettings = gameSettings
     }
 }
 
-struct GameSettings: Codable {
+struct GameSettings: Codable, Equatable {
     var penaltyEnabled: Bool = false
     var penaltyInterval: PenaltyInterval = .fifty
     var penaltyReduction: PenaltyReduction = .fixed(50)

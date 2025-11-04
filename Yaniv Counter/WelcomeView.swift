@@ -55,6 +55,47 @@ struct WelcomeView: View {
                     }
                     .padding(.top, 60)
                     
+                    // Ongoing Games
+                    if !gameManager.ongoingGames.isEmpty {
+                        GlassCard {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Ongoing Games")
+                                    .font(.system(size: 20, weight: .semibold))
+                                
+                                ForEach(gameManager.ongoingGames) { game in
+                                    Button(action: {
+                                        gameManager.loadGame(game: game)
+                                    }) {
+                                        HStack {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text("\(game.players.count) Players")
+                                                    .font(.system(size: 16, weight: .medium))
+                                                Text("Target: \(game.targetScore)")
+                                                    .font(.system(size: 14, weight: .regular))
+                                                    .foregroundColor(.secondary)
+                                                Text(game.players.map { $0.name }.joined(separator: ", "))
+                                                    .font(.system(size: 12, weight: .light))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            Spacer()
+                                            Text("Round \(game.roundHistory.count)")
+                                                .font(.system(size: 14, weight: .regular))
+                                                .foregroundColor(.secondary)
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 14, weight: .semibold))
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
+                                    .background(Color.secondary.opacity(0.05))
+                                    .cornerRadius(10)
+                                }
+                            }
+                        }
+                    }
+                    
                     // Target Score Selection
                     GlassCard {
                         VStack(alignment: .leading, spacing: 16) {
