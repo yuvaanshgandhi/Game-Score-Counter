@@ -34,9 +34,9 @@ class GameManager {
     
     // MARK: - Game Setup
     
-    func startNewGame(targetScore: Int, playerNames: [String], settings: GameSettings = GameSettings()) {
+    func startNewGame(targetScore: Int, players: [Player], settings: GameSettings = GameSettings()) {
         self.targetScore = targetScore
-        self.players = playerNames.map { Player(name: $0, score: 0) }
+        self.players = players.map { Player(id: $0.id, name: $0.name, score: 0, isEliminated: false) }
         self.currentRound = 0
         self.gamePhase = .playing
         self.roundHistory = []
@@ -56,20 +56,6 @@ class GameManager {
         roundHistory = []
         winner = nil
         gameSettings = GameSettings()
-        saveGameState()
-    }
-    
-    // MARK: - Player Management
-    
-    func addPlayer(_ name: String) {
-        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        let player = Player(name: name.trimmingCharacters(in: .whitespaces))
-        players.append(player)
-        saveGameState()
-    }
-    
-    func removePlayer(_ player: Player) {
-        players.removeAll { $0.id == player.id }
         saveGameState()
     }
     

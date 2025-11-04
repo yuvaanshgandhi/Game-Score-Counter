@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WelcomeView: View {
     @Bindable var gameManager: GameManager
+    @Environment(PlayerManager.self) private var playerManager
     @State private var targetScore: Int = 200
     @State private var newPlayerName: String = ""
     @FocusState private var isTextFieldFocused: Bool
@@ -113,15 +114,43 @@ struct WelcomeView: View {
                         }
                     }
                     
-                    // Add Players Section
+                    // Select Players Section
                     GlassCard {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Players")
+                            Text("Select Players")
                                 .font(.system(size: 20, weight: .semibold))
+                            
+                            // Player list
+                            if !playerManager.players.isEmpty {
+                                VStack(spacing: 8) {
+                                    ForEach(playerManager.players) { player in
+                                        Button(action: {
+                                            togglePlayerSelection(player)
+                                        }) {
+                                            HStack {
+                                                Image(systemName: gameManager.players.contains(where: { $0.id == player.id }) ? "checkmark.circle.fill" : "circle")
+                                                    .font(.system(size: 24))
+                                                    .foregroundColor(gameManager.players.contains(where: { $0.id == player.id }) ? .orange : .secondary)
+                                                
+                                                Text(player.name)
+                                                    .font(.system(size: 16, weight: .medium))
+                                                
+                                                Spacer()
+                                            }
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 12)
+                                        .background(Color.secondary.opacity(0.05))
+                                        .cornerRadius(10)
+                                    }
+                                }
+                                .padding(.top, 8)
+                            }
                             
                             // Add player input
                             HStack(spacing: 12) {
-                                TextField("Player name", text: $newPlayerName)
+                                TextField("Add new player", text: $newPlayerName)
                                     .textFieldStyle(.plain)
                                     .font(.system(size: 16))
                                     .padding(12)
@@ -135,47 +164,15 @@ struct WelcomeView: View {
                                 Button(action: addPlayer) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 32))
-                                                                        .foregroundStyle(
-                                                                            LinearGradient(
-                                                                                colors: [.orange],
-                                                                                startPoint: .topLeading,
-                                                                                endPoint: .bottomTrailing
-                                                                            )
-                                                                        )                                }
-                                .disabled(newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
-                            }
-                            
-                            // Player list
-                            if !gameManager.players.isEmpty {
-                                VStack(spacing: 8) {
-                                    ForEach(gameManager.players) { player in
-                                        HStack {
-                                            Image(systemName: "person.circle.fill")
-                                                .font(.system(size: 24))
-                                                .foregroundColor(.blue)
-                                            
-                                            Text(player.name)
-                                                .font(.system(size: 16, weight: .medium))
-                                            
-                                            Spacer()
-                                            
-                                            Button(action: {
-                                                withAnimation {
-                                                    gameManager.removePlayer(player)
-                                                }
-                                            }) {
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .font(.system(size: 20))
-                                                    .foregroundColor(.red.opacity(0.6))
-                                            }
-                                        }
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(Color.secondary.opacity(0.05))
-                                        .cornerRadius(10)
-                                    }
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [.orange],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
                                 }
-                                .padding(.top, 8)
+                                .disabled(newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
                             }
                         }
                     }
@@ -299,7 +296,7 @@ struct WelcomeView: View {
                                 )
                                 gameManager.startNewGame(
                                     targetScore: targetScore,
-                                    playerNames: gameManager.players.map { $0.name },
+                                    players: gameManager.players,
                                     settings: settings
                                 )
                             }
@@ -341,11 +338,19 @@ struct WelcomeView: View {
         guard !trimmed.isEmpty else { return }
         
         withAnimation(.spring(response: 0.3)) {
-            gameManager.addPlayer(trimmed)
+            playerManager.addPlayer(trimmed)
         }
         
         newPlayerName = ""
         isTextFieldFocused = false
+    }
+    
+    private func togglePlayerSelection(_ player: Player) {
+        if let index = gameManager.players.firstIndex(where: { $0.id == player.id }) {
+            gameManager.players.remove(at: index)
+        } else {
+            gameManager.players.append(player)
+        }
     }
     
     private func isReductionSelected(_ current: PenaltyReduction, _ option: PenaltyReduction) -> Bool {

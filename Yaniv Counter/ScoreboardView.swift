@@ -11,6 +11,7 @@ struct ScoreboardView: View {
     @Bindable var gameManager: GameManager
     @State private var showAddRound = false
     @State private var showHistory = false
+    @State private var showStatistics = false
     
     var body: some View {
         ZStack {
@@ -32,6 +33,11 @@ struct ScoreboardView: View {
                         Spacer()
                         
                         Menu {
+                            Button(action: {
+                                showStatistics = true
+                            }) {
+                                Label("Statistics", systemImage: "chart.bar.xaxis")
+                            }
                             Button(role: .destructive, action: {
                                 gameManager.resetGame()
                             }) {
@@ -130,6 +136,9 @@ struct ScoreboardView: View {
         }
         .sheet(isPresented: $showHistory) {
             HistoryView(gameManager: gameManager, isPresentedFromScoreboard: true)
+        }
+        .sheet(isPresented: $showStatistics) {
+            StatisticsView(gameHistory: gameManager.gameHistory)
         }
     }
 }
