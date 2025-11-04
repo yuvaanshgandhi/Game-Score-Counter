@@ -128,34 +128,38 @@ class GameManager {
                 players[playerIndex].isEliminated = true
             } else if !wasEliminatedBefore {
                 // Player is still active, check for penalties
-                if gameSettings.penaltyEnabled {
+                if gameSettings.penaltyEnabled && !wasEliminatedBefore {
                     let interval = gameSettings.penaltyInterval.rawValue
-                    
-                    // Check if player's score is exactly at a threshold (50, 100, 150, etc.)
-                    // Penalty applies only when score is exactly a multiple of the interval
-                    let isAtThreshold = newScore % interval == 0 && newScore > 0
-                    let wasAtThreshold = oldScore % interval == 0 && oldScore > 0
-                    
-                    // Apply penalty if player reached a threshold (is exactly at it now, but wasn't before)
-                    // Example: oldScore 49, newScore 50 -> penalty applies (reached 50)
-                    // Example: oldScore 49, newScore 51 -> no penalty (not exactly at 50)
-                    // Example: oldScore 50, newScore 51 -> no penalty (already past threshold)
-                    // Example: oldScore 99, newScore 100 -> penalty applies (reached 100)
-                    if isAtThreshold && !wasAtThreshold {
-                        // Calculate penalty reduction based on the threshold reached
-                        let penaltyAmount: Int
-                        switch gameSettings.penaltyReduction {
-                        case .fixed(let amount):
-                            penaltyAmount = amount
-                        case .half:
-                            penaltyAmount = newScore / 2
+                    var scoreAfterBonuses = newScore
+                    var totalBonus = 0
+
+                    // Calculate the first threshold to check. It should be the first multiple of 'interval'
+                    // that is strictly greater than 'oldScore'.
+                    let firstThreshold = ((oldScore / interval) + 1) * interval
+
+                    // Iterate through all multiples of 'interval' from 'firstThreshold' up to 'newScore'
+                    for threshold in stride(from: firstThreshold, through: newScore, by: interval) {
+                        // A bonus is applicable if the score reaches or crosses this threshold.
+                        // The condition 'oldScore < threshold' ensures we only apply for new crossings.
+                        if oldScore < threshold && newScore >= threshold {
+                            let penaltyAmount: Int
+                            switch gameSettings.penaltyReduction {
+                            case .fixed(let amount):
+                                penaltyAmount = amount
+                            case .half:
+                                // The bonus is half of the threshold value
+                                penaltyAmount = threshold / 2
+                            }
+                            
+                            // Apply the bonus
+                            scoreAfterBonuses -= penaltyAmount
+                            totalBonus += penaltyAmount
                         }
-                        
-                        // Track the reduction amount for history
-                        bonusReduction = penaltyAmount
-                        
-                        // Apply penalty (ensure score doesn't go below 0)
-                        newScore = max(0, newScore - penaltyAmount)
+                    }
+
+                    if totalBonus > 0 {
+                        bonusReduction = totalBonus
+                        newScore = max(0, scoreAfterBonuses)
                     }
                 }
                 
