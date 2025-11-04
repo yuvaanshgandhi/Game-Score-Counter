@@ -6,6 +6,56 @@
 //
 
 import SwiftUI
+import Charts
+
+struct LineChartView: View {
+    let game: Game
+    
+    var body: some View {
+        Chart {
+            ForEach(game.players) { player in
+                let cumulativeScores = cumulativeScoresForPlayer(player)
+                ForEach(Array(cumulativeScores.enumerated()), id: \.offset) { index, score in
+                    LineMark(
+                        x: .value("Round", index),
+                        y: .value("Score", score)
+                    )
+                    .foregroundStyle(by: .value("Player", player.name))
+                }
+            }
+        }
+        .chartXAxis {
+            AxisMarks(values: .automatic) { _ in
+                AxisGridLine()
+                AxisTick()
+                AxisValueLabel()
+            }
+        }
+        .chartYAxis {
+            AxisMarks(values: .automatic) { _ in
+                AxisGridLine()
+                AxisTick()
+                AxisValueLabel()
+            }
+        }
+        .padding()
+        .frame(height: 300)
+        .modifier(GlassCardModifier())
+        .padding(.horizontal)
+    }
+    
+    private func cumulativeScoresForPlayer(_ player: Player) -> [Int] {
+        var cumulativeScores: [Int] = [0] // Start with a score of 0
+        var currentScore = 0
+        for round in game.roundHistory {
+            if let scoreChange = round.scoreChanges.first(where: { $0.playerName == player.name }) {
+                currentScore += scoreChange.pointsAdded
+            }
+            cumulativeScores.append(currentScore)
+        }
+        return cumulativeScores
+    }
+}
 
 struct GameStatisticsView: View {
     let game: Game
@@ -15,18 +65,18 @@ struct GameStatisticsView: View {
             LiquidGlassBackground(color: .orange, intensity: 0.5)
             
             VStack {
-                List {
-                    ForEach(game.players) { player in
-                        PlayerGameStatsCard(player: player, game: game)
-                            .modifier(GlassCardModifier())
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .listRowSeparator(.hidden)
+                ScrollView {
+                    VStack {
+                        LineChartView(game: game)
+                            .padding(.vertical, 4)
+                        ForEach(game.players) { player in
+                            PlayerGameStatsCard(player: player, game: game)
+                                .modifier(GlassCardModifier())
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 16)
+                        }
                     }
                 }
-                .listStyle(.plain)
                 .background(Color.clear)
             }
         }
