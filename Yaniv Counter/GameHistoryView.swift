@@ -63,6 +63,13 @@ struct GameHistoryView: View {
             }
             .navigationTitle("Game History")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: StatisticsView(gameHistory: gameManager.gameHistory)) {
+                        Image(systemName: "chart.bar.xaxis")
+                    }
+                }
+            }
         }
     }
     

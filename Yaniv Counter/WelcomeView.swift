@@ -285,20 +285,7 @@ struct WelcomeView: View {
                     }
                     
                     // Action Buttons
-                    HStack {
-                        if !gameManager.gameHistory.isEmpty {
-                            Button(action: {
-                                showGameHistory = true
-                            }) {
-                                Image(systemName: "clock.arrow.circlepath")
-                                    .font(.system(size: 18, weight: .semibold))
-                                Text("History")
-                                    .font(.system(size: 17, weight: .semibold))
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.orange)
-                        }
-                        
+                    VStack(spacing: 16) {
                         if !gameManager.players.isEmpty && targetScore > 0 {
                             GradientButton(
                                 "Start Game",
@@ -316,6 +303,25 @@ struct WelcomeView: View {
                                     settings: settings
                                 )
                             }
+                        }
+                        
+                        if !gameManager.gameHistory.isEmpty {
+                            Button(action: {
+                                showGameHistory = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "clock.arrow.circlepath")
+                                        .font(.system(size: 18, weight: .semibold))
+                                    Text("History")
+                                        .font(.system(size: 17, weight: .semibold))
+                                }
+                                .foregroundColor(.primary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.horizontal, 20)
