@@ -241,6 +241,8 @@ class GameManager {
         if activePlayers.count == 1 {
             gamePhase = .finished
             winner = activePlayers.first
+            let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+            gameHistory.append(game)
             
             // Haptic feedback for winner
             HapticHelper.notification(.success)
@@ -248,6 +250,8 @@ class GameManager {
             gamePhase = .finished
             // All players eliminated - use player with lowest score
             winner = players.min(by: { $0.score < $1.score })
+            let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+            gameHistory.append(game)
         }
     }
     
