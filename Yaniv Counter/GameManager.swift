@@ -133,27 +133,24 @@ class GameManager {
                     var scoreAfterBonuses = newScore
                     var totalBonus = 0
 
-                    // Calculate the first threshold to check. It should be the first multiple of 'interval'
-                    // that is strictly greater than 'oldScore'.
-                    let firstThreshold = ((oldScore / interval) + 1) * interval
+                    if newScore > oldScore && newScore % interval == 0 {
+                        let oldIntervals = oldScore / interval
+                        let newIntervals = newScore / interval
+                        let bonusesToApply = newIntervals - oldIntervals
 
-                    // Iterate through all multiples of 'interval' from 'firstThreshold' up to 'newScore'
-                    for threshold in stride(from: firstThreshold, through: newScore, by: interval) {
-                        // A bonus is applicable if the score reaches or crosses this threshold.
-                        // The condition 'oldScore < threshold' ensures we only apply for new crossings.
-                        if oldScore < threshold && newScore >= threshold {
-                            let penaltyAmount: Int
+                        if bonusesToApply > 0 {
+                            var totalPenalty = 0
                             switch gameSettings.penaltyReduction {
                             case .fixed(let amount):
-                                penaltyAmount = amount
+                                totalPenalty = amount * bonusesToApply
                             case .half:
-                                // The bonus is half of the threshold value
-                                penaltyAmount = threshold / 2
+                                for i in (oldIntervals + 1)...newIntervals {
+                                    let threshold = i * interval
+                                    totalPenalty += threshold / 2
+                                }
                             }
-                            
-                            // Apply the bonus
-                            scoreAfterBonuses -= penaltyAmount
-                            totalBonus += penaltyAmount
+                            scoreAfterBonuses -= totalPenalty
+                            totalBonus += totalPenalty
                         }
                     }
 
