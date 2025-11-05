@@ -23,10 +23,10 @@ struct ScoreboardView: View {
                 VStack(spacing: 8) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Round \(gameManager.currentRound)")
+                            Text("End of Round \(gameManager.currentRound)")
                                 .font(.system(size: 24, weight: .bold))
                             
-                            Text("Target: \(gameManager.targetScore)")
+                            Text("Max Points: \(gameManager.targetScore)")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.secondary)
                         }
@@ -72,7 +72,6 @@ struct ScoreboardView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
-                .background(.ultraThinMaterial)
                 
                 // Players List
                 ScrollView {
@@ -137,7 +136,6 @@ struct ScoreboardView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
-                .background(.ultraThinMaterial)
             }
         }
         .sheet(isPresented: $showAddRound) {
