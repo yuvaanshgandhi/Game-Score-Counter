@@ -133,25 +133,23 @@ class GameManager {
                     var scoreAfterBonuses = newScore
                     var totalBonus = 0
 
-                    if newScore > oldScore && newScore % interval == 0 {
-                        let oldIntervals = oldScore / interval
-                        let newIntervals = newScore / interval
-                        let bonusesToApply = newIntervals - oldIntervals
+                    let oldIntervals = oldScore / interval
+                    let newIntervals = newScore / interval
 
-                        if bonusesToApply > 0 {
-                            var totalPenalty = 0
-                            switch gameSettings.penaltyReduction {
-                            case .fixed(let amount):
-                                totalPenalty = amount * bonusesToApply
-                            case .half:
-                                for i in (oldIntervals + 1)...newIntervals {
-                                    let threshold = i * interval
-                                    totalPenalty += threshold / 2
-                                }
+                    if newIntervals > oldIntervals {
+                        let bonusesToApply = newIntervals - oldIntervals
+                        var totalPenalty = 0
+                        switch gameSettings.penaltyReduction {
+                        case .fixed(let amount):
+                            totalPenalty = amount * bonusesToApply
+                        case .half:
+                            for i in (oldIntervals + 1)...newIntervals {
+                                let threshold = i * interval
+                                totalPenalty += threshold / 2
                             }
-                            scoreAfterBonuses -= totalPenalty
-                            totalBonus += totalPenalty
                         }
+                        scoreAfterBonuses -= totalPenalty
+                        totalBonus += totalPenalty
                     }
 
                     if totalBonus > 0 {
