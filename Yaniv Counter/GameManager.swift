@@ -127,34 +127,19 @@ class GameManager {
                 players[playerIndex].score = newScore
                 players[playerIndex].isEliminated = true
             } else if !wasEliminatedBefore {
-                // Player is still active, check for penalties
-                if gameSettings.penaltyEnabled && !wasEliminatedBefore {
-                    let interval = gameSettings.penaltyInterval.rawValue
-                    var scoreAfterBonuses = newScore
-                    var totalBonus = 0
-
-                    let oldIntervals = oldScore / interval
-                    let newIntervals = newScore / interval
-
-                    if newIntervals > oldIntervals {
-                        let bonusesToApply = newIntervals - oldIntervals
-                        var totalPenalty = 0
-                        switch gameSettings.penaltyReduction {
-                        case .fixed(let amount):
-                            totalPenalty = amount * bonusesToApply
-                        case .half:
-                            for i in (oldIntervals + 1)...newIntervals {
-                                let threshold = i * interval
-                                totalPenalty += threshold / 2
-                            }
-                        }
-                        scoreAfterBonuses -= totalPenalty
-                        totalBonus += totalPenalty
+                // Player is still active, check for score bonuses
+                if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 {
+                    let reduction: Int
+                    switch gameSettings.penaltyReduction {
+                    case .fixed(let amount):
+                        reduction = amount
+                    case .half:
+                        reduction = newScore / 2
                     }
-
-                    if totalBonus > 0 {
-                        bonusReduction = totalBonus
-                        newScore = max(0, scoreAfterBonuses)
+                    
+                    if reduction > 0 {
+                        bonusReduction = reduction
+                        newScore -= reduction
                     }
                 }
                 
