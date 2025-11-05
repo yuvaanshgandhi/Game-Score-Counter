@@ -121,17 +121,25 @@ struct ScoreboardView: View {
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(12)
                     }
+                    .buttonStyle(.plain)
+                    .glassEffect(in: .capsule)
                     
-                    GradientButton(
-                        "+ Round",
-                        icon: "plus.circle.fill"
-                    ) {
+                    Button(action: {
                         showAddRound = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("+ Round")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
                     }
-                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.plain)
+                    .glassEffect(.regular.tint(.orange).interactive())
                     .disabled(gameManager.getActivePlayers().isEmpty)
                 }
                 .padding(.horizontal, 20)
@@ -162,71 +170,71 @@ struct PlayerCard: View {
     }
     
     var body: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    HStack(spacing: 12) {
-                        Image(systemName: isEliminated ? "xmark.circle.fill" : "person.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundStyle(
-                                isEliminated
-                                    ? LinearGradient(colors: [.red, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                    : LinearGradient(colors: [.orange], startPoint: .topLeading, endPoint: .bottomTrailing)
-                            )
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                HStack(spacing: 12) {
+                    Image(systemName: isEliminated ? "xmark.circle.fill" : "person.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundStyle(
+                            isEliminated
+                                ? LinearGradient(colors: [.red, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                : LinearGradient(colors: [.orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(player.name)
+                            .font(.system(size: 20, weight: .semibold))
+                            .strikethrough(isEliminated)
                         
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(player.name)
-                                .font(.system(size: 20, weight: .semibold))
-                                .strikethrough(isEliminated)
-                            
-                            if isEliminated {
-                                Text("Eliminated")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.red)
-                            }
-                        }
-                    }
-                    
-//                    Spacer()
-                    
-                    if isRoundWinner {
-                        Image(systemName: "trophy.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.yellow)
-                    }
-                    
-                    if isRoundLoser {
-                        Image(systemName: "shuffle")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.blue)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text("\(player.score)")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: isEliminated ? [.red, .orange] : [.orange],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                        
-                        if !isEliminated {
-                            Text("\(targetScore + 1 - player.score) to eliminate")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundColor(.secondary)
+                        if isEliminated {
+                            Text("Eliminated")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.red)
                         }
                     }
                 }
                 
-                if !isEliminated {
-                    ProgressBar(progress: progress, color: .orange)
+//                    Spacer()
+                
+                if isRoundWinner {
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.yellow)
+                }
+                
+                if isRoundLoser {
+                    Image(systemName: "shuffle")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.blue)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("\(player.score)")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: isEliminated ? [.red, .orange] : [.orange],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    if !isEliminated {
+                        Text("\(targetScore + 1 - player.score) to eliminate")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
+            
+            if !isEliminated {
+                ProgressBar(progress: progress, color: .orange)
+            }
         }
+        .padding(16)
+        .glassEffect(in: .rect(cornerRadius: 22))
         .opacity(isEliminated ? 0.6 : 1.0)
     }
 }

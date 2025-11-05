@@ -120,69 +120,6 @@ struct ProgressBar: View {
     }
 }
 
-// MARK: - Glass Card
-
-struct GlassCard<Content: View>: View {
-    let content: Content
-    var padding: CGFloat = 20
-    
-    init(padding: CGFloat = 20, @ViewBuilder content: () -> Content) {
-        self.padding = padding
-        self.content = content()
-    }
-    
-    var body: some View {
-        content
-            .padding(padding)
-            .background {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
-            }
-    }
-}
-
-// MARK: - Gradient Button
-
-struct GradientButton: View {
-    let title: String
-    let icon: String?
-    let action: () -> Void
-    var colors: [Color] = [.orange]
-    
-    init(_ title: String, icon: String? = nil, colors: [Color] = [.orange], action: @escaping () -> Void) {
-        self.title = title
-        self.icon = icon
-        self.colors = colors
-        self.action = action
-    }
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let icon = icon {
-                    Image(systemName: icon)
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                Text(title)
-                    .font(.system(size: 17, weight: .semibold))
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background {
-                LinearGradient(
-                    colors: colors,
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-                .cornerRadius(12)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 // MARK: - Confetti Effect
 
 struct ConfettiView: View {

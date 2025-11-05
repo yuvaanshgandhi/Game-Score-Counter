@@ -7,18 +7,6 @@
 
 import SwiftUI
 
-struct GlassCardModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(20)
-            .background {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
-            }
-    }
-}
-
 struct GameHistoryView: View {
     @Bindable var gameManager: GameManager
     
@@ -46,8 +34,9 @@ struct GameHistoryView: View {
                         ForEach(gameManager.gameHistory.reversed()) { game in
                             NavigationLink(destination: HistoryView(gameManager: createGameManager(for: game))) {
                                 GameHistoryCell(game: game)
+                                    .padding(16)
                             }
-                            .modifier(GlassCardModifier())
+                            .glassEffect(in: .rect(cornerRadius: 22))
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                             .padding(.vertical, 8)

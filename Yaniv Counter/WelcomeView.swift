@@ -57,33 +57,125 @@ struct WelcomeView: View {
                     
                     // Ongoing Games
                     if !gameManager.ongoingGames.isEmpty {
-                        GlassCard {
-                            VStack(alignment: .leading, spacing: 16) {
-                                Text("Ongoing Games")
-                                    .font(.system(size: 20, weight: .semibold))
-                                
-                                ForEach(gameManager.ongoingGames) { game in
-                                    Button(action: {
-                                        gameManager.loadGame(game: game)
-                                    }) {
-                                        HStack {
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text("\(game.players.count) Players")
-                                                    .font(.system(size: 16, weight: .medium))
-                                                Text("Target: \(game.targetScore)")
-                                                    .font(.system(size: 14, weight: .regular))
-                                                    .foregroundColor(.secondary)
-                                                Text(game.players.map { $0.name }.joined(separator: ", "))
-                                                    .font(.system(size: 12, weight: .light))
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            Spacer()
-                                            Text("Round \(game.roundHistory.count)")
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Ongoing Games")
+                                .font(.system(size: 20, weight: .semibold))
+                            
+                            ForEach(gameManager.ongoingGames) { game in
+                                Button(action: {
+                                    gameManager.loadGame(game: game)
+                                }) {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("\(game.players.count) Players")
+                                                .font(.system(size: 16, weight: .medium))
+                                            Text("Target: \(game.targetScore)")
                                                 .font(.system(size: 14, weight: .regular))
                                                 .foregroundColor(.secondary)
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
+                                            Text(game.players.map { $0.name }.joined(separator: ", "))
+                                                .font(.system(size: 12, weight: .light))
                                                 .foregroundColor(.secondary)
+                                        }
+                                        Spacer()
+                                        Text("Round \(game.roundHistory.count)")
+                                            .font(.system(size: 14, weight: .regular))
+                                            .foregroundColor(.secondary)
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(Color.secondary.opacity(0.05))
+                                .cornerRadius(10)
+                            }
+                        }
+                        .padding(16)
+                        .glassEffect(in: .rect(cornerRadius: 22))
+                    }
+                    
+                    // Target Score Selection
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Target Score")
+                            .font(.system(size: 20, weight: .semibold))
+                        
+                        // Preset scores
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible())
+                        ], spacing: 12) {
+                            ForEach(presetScores, id: \.self) { score in
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        targetScore = score
+                                    }
+                                }) {
+                                    Text("\(score)")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(targetScore == score ? .white : .primary)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background {
+                                            if targetScore == score {
+                                                LinearGradient(
+                                                    colors: [.orange],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            } else {
+                                                Color.secondary.opacity(0.1)
+                                            }
+                                        }
+                                        .cornerRadius(10)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        
+                        // Custom score input
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Custom")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                            
+                            TextField("Enter score", value: $targetScore, format: .number)
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 18, weight: .semibold))
+                                .padding(12)
+                                .background(Color.secondary.opacity(0.1))
+                                .cornerRadius(10)
+                                .keyboardType(.numberPad)
+                                .focused($isTextFieldFocused)
+                        }
+                    }
+                    .padding(16)
+                    .glassEffect(in: .rect(cornerRadius: 22))
+                    
+                    // Select Players Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Select Players")
+                            .font(.system(size: 20, weight: .semibold))
+                        
+                        // Player list
+                        if !playerManager.players.isEmpty {
+                            VStack(spacing: 8) {
+                                ForEach(playerManager.players) { player in
+                                    Button(action: {
+                                        togglePlayerSelection(player)
+                                    }) {
+                                        HStack {
+                                            Image(systemName: gameManager.players.contains(where: { $0.id == player.id }) ? "checkmark.circle.fill" : "circle")
+                                                .font(.system(size: 24))
+                                                .foregroundColor(gameManager.players.contains(where: { $0.id == player.id }) ? .orange : .secondary)
+                                            
+                                            Text(player.name)
+                                                .font(.system(size: 16, weight: .medium))
+                                            
+                                            Spacer()
                                         }
                                     }
                                     .buttonStyle(.plain)
@@ -93,243 +185,147 @@ struct WelcomeView: View {
                                     .cornerRadius(10)
                                 }
                             }
+                            .padding(.top, 8)
                         }
-                    }
-                    
-                    // Target Score Selection
-                    GlassCard {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Target Score")
-                                .font(.system(size: 20, weight: .semibold))
-                            
-                            // Preset scores
-                            LazyVGrid(columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ], spacing: 12) {
-                                ForEach(presetScores, id: \.self) { score in
-                                    Button(action: {
-                                        withAnimation(.spring(response: 0.3)) {
-                                            targetScore = score
-                                        }
-                                    }) {
-                                        Text("\(score)")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(targetScore == score ? .white : .primary)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 12)
-                                            .background {
-                                                if targetScore == score {
-                                                    LinearGradient(
-                                                        colors: [.orange],
-                                                        startPoint: .leading,
-                                                        endPoint: .trailing
-                                                    )
-                                                } else {
-                                                    Color.secondary.opacity(0.1)
-                                                }
-                                            }
-                                            .cornerRadius(10)
-                                    }
-                                    .buttonStyle(.plain)
+                        
+                        // Add player input
+                        HStack(spacing: 12) {
+                            TextField("Add new player", text: $newPlayerName)
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 16))
+                                .padding(12)
+                                .background(Color.secondary.opacity(0.1))
+                                .cornerRadius(10)
+                                .focused($isTextFieldFocused)
+                                .onSubmit {
+                                    addPlayer()
                                 }
-                            }
                             
-                            // Custom score input
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Custom")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                
-                                TextField("Enter score", value: $targetScore, format: .number)
-                                    .textFieldStyle(.plain)
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .padding(12)
-                                    .background(Color.secondary.opacity(0.1))
-                                    .cornerRadius(10)
-                                    .keyboardType(.numberPad)
-                                    .focused($isTextFieldFocused)
-                            }
-                        }
-                    }
-                    
-                    // Select Players Section
-                    GlassCard {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Select Players")
-                                .font(.system(size: 20, weight: .semibold))
-                            
-                            // Player list
-                            if !playerManager.players.isEmpty {
-                                VStack(spacing: 8) {
-                                    ForEach(playerManager.players) { player in
-                                        Button(action: {
-                                            togglePlayerSelection(player)
-                                        }) {
-                                            HStack {
-                                                Image(systemName: gameManager.players.contains(where: { $0.id == player.id }) ? "checkmark.circle.fill" : "circle")
-                                                    .font(.system(size: 24))
-                                                    .foregroundColor(gameManager.players.contains(where: { $0.id == player.id }) ? .orange : .secondary)
-                                                
-                                                Text(player.name)
-                                                    .font(.system(size: 16, weight: .medium))
-                                                
-                                                Spacer()
-                                            }
-                                        }
-                                        .buttonStyle(.plain)
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(Color.secondary.opacity(0.05))
-                                        .cornerRadius(10)
-                                    }
-                                }
-                                .padding(.top, 8)
-                            }
-                            
-                            // Add player input
-                            HStack(spacing: 12) {
-                                TextField("Add new player", text: $newPlayerName)
-                                    .textFieldStyle(.plain)
-                                    .font(.system(size: 16))
-                                    .padding(12)
-                                    .background(Color.secondary.opacity(0.1))
-                                    .cornerRadius(10)
-                                    .focused($isTextFieldFocused)
-                                    .onSubmit {
-                                        addPlayer()
-                                    }
-                                
-                                Button(action: addPlayer) {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 32))
-                                        .foregroundStyle(
-                                            LinearGradient(
-                                                colors: [.orange],
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            )
+                            Button(action: addPlayer) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 32))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [.orange],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
                                         )
-                                }
-                                .disabled(newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
+                                    )
                             }
+                            .disabled(newPlayerName.trimmingCharacters(in: .whitespaces).isEmpty)
                         }
                     }
+                    .padding(16)
+                    .glassEffect(in: .rect(cornerRadius: 22))
                     
                     // Penalty Settings
-                    GlassCard {
-                        VStack(alignment: .leading, spacing: 16) {
-                            HStack {
-                                Text("Score Bonus")
-                                    .font(.system(size: 20, weight: .semibold))
-                                
-                                Spacer()
-                                
-                                Toggle("", isOn: $penaltyEnabled)
-                                    .labelsHidden()
-                            }
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Score Bonus")
+                                .font(.system(size: 20, weight: .semibold))
                             
-                            if penaltyEnabled {
-                                VStack(spacing: 16) {
-                                    // Interval Selection
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        Text("Bonus Interval")
-                                            .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.secondary)
-                                        
-                                        HStack(spacing: 12) {
-                                            ForEach(PenaltyInterval.allCases, id: \.self) { interval in
-                                                Button(action: {
-                                                    withAnimation(.spring(response: 0.3)) {
-                                                        penaltyInterval = interval
-                                                    }
-                                                }) {
-                                                    Text("Every \(interval.displayName)")
-                                                        .font(.system(size: 14, weight: .semibold))
-                                                        .foregroundColor(penaltyInterval == interval ? .white : .primary)
-                                                        .frame(maxWidth: .infinity)
-                                                        .padding(.vertical, 10)
-                                                        .background {
-                                                            if penaltyInterval == interval {
-                                                                LinearGradient(
-                                                                    colors: [.orange],
-                                                                    startPoint: .leading,
-                                                                    endPoint: .trailing
-                                                                )
-                                                            } else {
-                                                                Color.secondary.opacity(0.1)
-                                                            }
-                                                        }
-                                                        .cornerRadius(8)
+                            Spacer()
+                            
+                            Toggle("", isOn: $penaltyEnabled)
+                                .labelsHidden()
+                        }
+                        
+                        if penaltyEnabled {
+                            VStack(spacing: 16) {
+                                // Interval Selection
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Bonus Interval")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.secondary)
+                                    
+                                    HStack(spacing: 12) {
+                                        ForEach(PenaltyInterval.allCases, id: \.self) { interval in
+                                            Button(action: {
+                                                withAnimation(.spring(response: 0.3)) {
+                                                    penaltyInterval = interval
                                                 }
-                                                .buttonStyle(.plain)
+                                            }) {
+                                                Text("Every \(interval.displayName)")
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(penaltyInterval == interval ? .white : .primary)
+                                                    .frame(maxWidth: .infinity)
+                                                    .padding(.vertical, 10)
+                                                    .background {
+                                                        if penaltyInterval == interval {
+                                                            LinearGradient(
+                                                                colors: [.orange],
+                                                                startPoint: .leading,
+                                                                endPoint: .trailing
+                                                            )
+                                                        } else {
+                                                            Color.secondary.opacity(0.1)
+                                                        }
+                                                    }
+                                                    .cornerRadius(8)
                                             }
+                                            .buttonStyle(.plain)
                                         }
                                     }
-                                    
-                                    // Reduction Selection
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        Text("Points Reduction")
-                                            .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.secondary)
-                                        
-                                        HStack(spacing: 12) {
-                                            ForEach(Array(reductionOptions.enumerated()), id: \.offset) { index, reduction in
-                                                let isSelected = isReductionSelected(penaltyReduction, reduction)
-                                                Button(action: {
-                                                    withAnimation(.spring(response: 0.3)) {
-                                                        penaltyReduction = reduction
-                                                    }
-                                                }) {
-                                                    Text(reduction.displayName)
-                                                        .font(.system(size: 14, weight: .semibold))
-                                                        .foregroundColor(isSelected ? .white : .primary)
-                                                        .frame(maxWidth: .infinity)
-                                                        .padding(.vertical, 10)
-                                                        .background {
-                                                            if isSelected {
-                                                                LinearGradient(
-                                                                    colors: [.orange],
-                                                                    startPoint: .leading,
-                                                                    endPoint: .trailing
-                                                                )
-                                                            } else {
-                                                                Color.secondary.opacity(0.1)
-                                                            }
-                                                        }
-                                                        .cornerRadius(8)
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                        }
-                                    }
-                                    
-                                    // Explanation
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "info.circle.fill")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.blue)
-                                        Text("Reduces score when player reaches interval thresholds")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .padding(.top, 4)
                                 }
-                                .transition(.opacity.combined(with: .move(edge: .top)))
+                                
+                                // Reduction Selection
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Points Reduction")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.secondary)
+                                    
+                                    HStack(spacing: 12) {
+                                        ForEach(Array(reductionOptions.enumerated()), id: \.offset) { index, reduction in
+                                            let isSelected = isReductionSelected(penaltyReduction, reduction)
+                                            Button(action: {
+                                                withAnimation(.spring(response: 0.3)) {
+                                                    penaltyReduction = reduction
+                                                }
+                                            }) {
+                                                Text(reduction.displayName)
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(isSelected ? .white : .primary)
+                                                    .frame(maxWidth: .infinity)
+                                                    .padding(.vertical, 10)
+                                                    .background {
+                                                        if isSelected {
+                                                            LinearGradient(
+                                                                colors: [.orange],
+                                                                startPoint: .leading,
+                                                                endPoint: .trailing
+                                                            )
+                                                        } else {
+                                                            Color.secondary.opacity(0.1)
+                                                        }
+                                                    }
+                                                    .cornerRadius(8)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                }
+                                
+                                // Explanation
+                                HStack(spacing: 8) {
+                                    Image(systemName: "info.circle.fill")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.blue)
+                                    Text("Reduces score when player reaches interval thresholds")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.top, 4)
                             }
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                         }
                     }
+                    .padding(16)
+                    .glassEffect(in: .rect(cornerRadius: 22))
                     
                     // Action Buttons
                     VStack(spacing: 16) {
                         if !gameManager.players.isEmpty && targetScore > 0 {
-                            GradientButton(
-                                "Start Game",
-                                icon: "play.fill",
-                                colors: [.orange]
-                            ) {
+                            Button(action: {
                                 let settings = GameSettings(
                                     penaltyEnabled: penaltyEnabled,
                                     penaltyInterval: penaltyInterval,
@@ -340,7 +336,19 @@ struct WelcomeView: View {
                                     players: gameManager.players,
                                     settings: settings
                                 )
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.fill")
+                                        .font(.system(size: 18, weight: .semibold))
+                                    Text("Start Game")
+                                        .font(.system(size: 17, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
                             }
+                            .buttonStyle(.plain)
+                            .glassEffect(.regular.tint(.orange).interactive())
                         }
                         
                         if !gameManager.gameHistory.isEmpty {
@@ -356,10 +364,9 @@ struct WelcomeView: View {
                                 .foregroundColor(.primary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
-                                .background(.ultraThinMaterial)
-                                .cornerRadius(12)
                             }
                             .buttonStyle(.plain)
+                            .glassEffect(in: .capsule)
                         }
                     }
                     .padding(.horizontal, 20)

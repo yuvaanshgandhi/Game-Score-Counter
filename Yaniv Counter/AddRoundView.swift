@@ -114,37 +114,37 @@ struct ScoreInputCard: View {
     let isFocused: Bool
     
     var body: some View {
-        GlassCard {
-            HStack(spacing: 16) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.orange)
+        HStack(spacing: 16) {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 32))
+                .foregroundStyle(.orange)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(player.name)
+                    .font(.system(size: 18, weight: .semibold))
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(player.name)
-                        .font(.system(size: 18, weight: .semibold))
-                    
-                    Text("Current: \(player.score)")
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                TextField("0", text: $scoreText)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .multilineTextAlignment(.trailing)
-                    .keyboardType(.numberPad)
-                    .frame(width: 80)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(isFocused ? Color.blue.opacity(0.15) : Color.secondary.opacity(0.1))
-                    }
+                Text("Current: \(player.score)")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
             }
+            
+            Spacer()
+            
+            TextField("0", text: $scoreText)
+                .textFieldStyle(.plain)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .multilineTextAlignment(.trailing)
+                .keyboardType(.numberPad)
+                .frame(width: 80)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isFocused ? Color.blue.opacity(0.15) : Color.secondary.opacity(0.1))
+                }
         }
+        .padding(16)
+        .glassEffect(in: .rect(cornerRadius: 22))
     }
 }
 

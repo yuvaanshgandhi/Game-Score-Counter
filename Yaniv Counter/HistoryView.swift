@@ -99,60 +99,60 @@ struct RoundHistoryCard: View {
     let round: RoundHistory
     
     var body: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("Round \(round.roundNumber)")
-                        .font(.system(size: 18, weight: .bold))
-                    
-                    Spacer()
-                    
-                    Text(round.timestamp, style: .time)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                }
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Round \(round.roundNumber)")
+                    .font(.system(size: 18, weight: .bold))
                 
-                Divider()
+                Spacer()
                 
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(round.scoreChanges) { change in
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text(change.playerName)
-                                    .font(.system(size: 16, weight: .medium))
-                                
-                                Spacer()
-                                
-                                HStack(spacing: 4) {
-                                    if change.wasEliminated {
-                                        Image(systemName: "exclamationmark.triangle.fill")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.red)
-                                    }
-                                    
-                                    Text("+\(change.pointsAdded)")
-                                        .font(.system(size: 16, weight: .semibold))
-                                        .foregroundColor(change.wasEliminated ? .red : .primary)
-                                }
-                            }
+                Text(round.timestamp, style: .time)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(round.scoreChanges) { change in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(change.playerName)
+                                .font(.system(size: 16, weight: .medium))
                             
-                            // Show bonus reduction if applied
-                            if let reduction = change.bonusReduction {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "arrow.down.circle.fill")
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.orange)
-                                    Text("Bonus: -\(reduction)")
-                                        .font(.system(size: 13))
-                                        .foregroundColor(.orange)
+                            Spacer()
+                            
+                            HStack(spacing: 4) {
+                                if change.wasEliminated {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.red)
                                 }
-                                .padding(.leading, 4)
+                                
+                                Text("+\(change.pointsAdded)")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(change.wasEliminated ? .red : .primary)
                             }
+                        }
+                        
+                        // Show bonus reduction if applied
+                        if let reduction = change.bonusReduction {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.down.circle.fill")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.orange)
+                                Text("Bonus: -\(reduction)")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.orange)
+                            }
+                            .padding(.leading, 4)
                         }
                     }
                 }
             }
         }
+        .padding(16)
+        .glassEffect(in: .rect(cornerRadius: 22))
     }
 }
 

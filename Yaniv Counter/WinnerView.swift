@@ -87,13 +87,21 @@ struct WinnerView: View {
                 Spacer()
                 
                 // Action button
-                GradientButton(
-                    "New Game",
-                    icon: "arrow.counterclockwise",
-                    colors: [.orange]
-                ) {
+                Button(action: {
                     gameManager.resetGame()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("New Game")
+                            .font(.system(size: 17, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
                 }
+                .buttonStyle(.plain)
+                .glassEffect(.regular.tint(.orange).interactive())
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
             }
@@ -122,22 +130,22 @@ struct StatRow: View {
     let value: String
     
     var body: some View {
-        GlassCard(padding: 16) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundStyle(.orange)
-                
-                Text(label)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                Text(value)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-            }
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundStyle(.orange)
+            
+            Text(label)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.secondary)
+            
+            Spacer()
+            
+            Text(value)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
         }
+        .padding(16)
+        .glassEffect(in: .rect(cornerRadius: 22))
         .padding(.horizontal, 20)
     }
 }

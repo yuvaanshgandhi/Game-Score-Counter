@@ -49,7 +49,8 @@ struct StatisticsView: View {
                 
                 ForEach(allPlayers) { player in
                     PlayerStatsCard(player: player, gameHistory: gameHistory)
-                        .modifier(GlassCardModifier())
+                        .padding(16)
+                        .glassEffect(in: .rect(cornerRadius: 22))
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                         .padding(.vertical, 8)

@@ -40,7 +40,7 @@ struct LineChartView: View {
         }
         .padding()
         .frame(height: 300)
-        .modifier(GlassCardModifier())
+        .glassEffect(in: .rect(cornerRadius: 22))
         .padding(.horizontal)
     }
     
@@ -71,7 +71,8 @@ struct GameStatisticsView: View {
                             .padding(.vertical, 4)
                         ForEach(game.players) { player in
                             PlayerGameStatsCard(player: player, game: game)
-                                .modifier(GlassCardModifier())
+                                .padding(16)
+                                .glassEffect(in: .rect(cornerRadius: 22))
                                 .padding(.vertical, 4)
                                 .padding(.horizontal, 16)
                         }
