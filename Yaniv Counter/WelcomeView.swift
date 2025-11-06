@@ -61,11 +61,15 @@ struct WelcomeView: View {
                             Text("Ongoing Games")
                                 .font(.system(size: 20, weight: .semibold))
                             
-                            ForEach(gameManager.ongoingGames) { game in
+                            ForEach(Array(gameManager.ongoingGames.sorted(by: { $0.date > $1.date }).enumerated()), id: \.element.id) { index, game in
                                 Button(action: {
                                     gameManager.loadGame(game: game)
                                 }) {
                                     HStack {
+                                        Text("#\(gameManager.ongoingGames.count - index)")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(.secondary)
+                                        
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text("\(game.players.count) Players")
                                                 .font(.system(size: 16, weight: .medium))
@@ -324,7 +328,7 @@ struct WelcomeView: View {
                     
                     // Action Buttons
                     VStack(spacing: 16) {
-                        if !gameManager.players.isEmpty && targetScore > 0 {
+                        if gameManager.players.count > 1 && targetScore > 0 {
                             Button(action: {
                                 let settings = GameSettings(
                                     penaltyEnabled: penaltyEnabled,

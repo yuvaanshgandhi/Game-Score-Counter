@@ -108,8 +108,7 @@ class GameManager {
         var eliminatedPlayers: [Player] = []
         
         for (playerId, points) in scoreChanges {
-            guard let playerIndex = players.firstIndex(where: { $0.id == playerId }),
-                  points >= 0 else { continue }
+            guard let playerIndex = players.firstIndex(where: { $0.id == playerId }) else { continue }
             
             let player = players[playerIndex]
             let oldScore = player.score
@@ -198,7 +197,7 @@ class GameManager {
         // Reverse score changes
         for scoreChange in lastRound.scoreChanges {
             if let playerIndex = players.firstIndex(where: { $0.id == scoreChange.playerId }) {
-                players[playerIndex].score = max(0, players[playerIndex].score - scoreChange.pointsAdded)
+                players[playerIndex].score = players[playerIndex].score - scoreChange.pointsAdded
                 
                 // Restore elimination status if player was eliminated in this round
                 if scoreChange.wasEliminated {

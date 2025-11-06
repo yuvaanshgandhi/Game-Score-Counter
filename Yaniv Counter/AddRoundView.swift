@@ -21,8 +21,7 @@ struct AddRoundView: View {
     var canSubmit: Bool {
         activePlayers.allSatisfy { player in
             let input = scoreInputs[player.id] ?? ""
-            let score = Int(input) ?? 0
-            return !input.isEmpty && score >= 0
+            return !input.isEmpty
         }
     }
     
@@ -76,6 +75,25 @@ struct AddRoundView: View {
                     .fontWeight(.semibold)
                     .disabled(!canSubmit)
                 }
+
+                ToolbarItemGroup(placement: .keyboard) {
+                    Button("-") {
+                        if let focusedId = focusedPlayerId,
+                           let currentScoreString = scoreInputs[focusedId] {
+                            if let currentValue = Double(currentScoreString) {
+                                scoreInputs[focusedId] = String(-currentValue)
+                            } else if currentScoreString.isEmpty {
+                                scoreInputs[focusedId] = "-"
+                            } else if currentScoreString == "-" {
+                                scoreInputs[focusedId] = ""
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button("Done") {
+                        focusedPlayerId = nil
+                    }
+                }
             }
         }
         .onAppear {
@@ -93,7 +111,7 @@ struct AddRoundView: View {
         
         for player in activePlayers {
             let input = scoreInputs[player.id] ?? ""
-            if let score = Int(input), score >= 0 {
+            if let score = Int(input) {
                 scoreChanges[player.id] = score
             }
         }
