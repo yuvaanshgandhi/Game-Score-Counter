@@ -75,6 +75,25 @@ struct AddRoundView: View {
                     .fontWeight(.semibold)
                     .disabled(!canSubmit)
                 }
+
+                ToolbarItemGroup(placement: .keyboard) {
+                    Button("-") {
+                        if let focusedId = focusedPlayerId,
+                           let currentScoreString = scoreInputs[focusedId] {
+                            if let currentValue = Double(currentScoreString) {
+                                scoreInputs[focusedId] = String(-currentValue)
+                            } else if currentScoreString.isEmpty {
+                                scoreInputs[focusedId] = "-"
+                            } else if currentScoreString == "-" {
+                                scoreInputs[focusedId] = ""
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button("Done") {
+                        focusedPlayerId = nil
+                    }
+                }
             }
         }
         .onAppear {
@@ -133,7 +152,7 @@ struct ScoreInputCard: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.trailing)
-                .keyboardType(.decimalPad)
+                .keyboardType(.numberPad)
                 .frame(width: 80)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
