@@ -21,8 +21,7 @@ struct AddRoundView: View {
     var canSubmit: Bool {
         activePlayers.allSatisfy { player in
             let input = scoreInputs[player.id] ?? ""
-            let score = Int(input) ?? 0
-            return !input.isEmpty && score >= 0
+            return !input.isEmpty
         }
     }
     
@@ -93,7 +92,7 @@ struct AddRoundView: View {
         
         for player in activePlayers {
             let input = scoreInputs[player.id] ?? ""
-            if let score = Int(input), score >= 0 {
+            if let score = Int(input) {
                 scoreChanges[player.id] = score
             }
         }
@@ -134,7 +133,7 @@ struct ScoreInputCard: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.trailing)
-                .keyboardType(.numberPad)
+                .keyboardType(.decimalPad)
                 .frame(width: 80)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
