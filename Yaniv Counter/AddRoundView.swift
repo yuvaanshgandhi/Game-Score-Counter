@@ -148,6 +148,19 @@ struct ScoreInputCard: View {
             
             Spacer()
             
+            Button(action: {
+                HapticHelper.impact(.light)
+                if let score = Int(scoreText) {
+                    scoreText = String(score - 1)
+                } else {
+                    scoreText = "-1"
+                }
+            }) {
+                Image(systemName: "minus.circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.orange)
+            }
+            
             TextField("0", text: $scoreText)
                 .textFieldStyle(.plain)
                 .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -156,10 +169,20 @@ struct ScoreInputCard: View {
                 .frame(width: 80)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(isFocused ? Color.blue.opacity(0.15) : Color.secondary.opacity(0.1))
+                .glassEffect()
+            
+            Button(action: {
+                HapticHelper.impact(.light)
+                if let score = Int(scoreText) {
+                    scoreText = String(score + 1)
+                } else {
+                    scoreText = "1"
                 }
+            }) {
+                Image(systemName: "plus.circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.orange)
+            }
         }
         .padding(16)
         .glassEffect(in: .rect(cornerRadius: 22))

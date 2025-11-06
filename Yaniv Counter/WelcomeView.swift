@@ -89,11 +89,9 @@ struct WelcomeView: View {
                                             .foregroundColor(.secondary)
                                     }
                                 }
-                                .buttonStyle(.plain)
                                 .padding(.vertical, 8)
                                 .padding(.horizontal, 12)
-                                .background(Color.secondary.opacity(0.05))
-                                .cornerRadius(10)
+                                .glassEffect(in: .rect(cornerRadius: 22))
                             }
                         }
                         .padding(16)
@@ -150,10 +148,9 @@ struct WelcomeView: View {
                                 .textFieldStyle(.plain)
                                 .font(.system(size: 18, weight: .semibold))
                                 .padding(12)
-                                .background(Color.secondary.opacity(0.1))
-                                .cornerRadius(10)
                                 .keyboardType(.numberPad)
                                 .focused($isTextFieldFocused)
+                                .glassEffect(in: .rect(cornerRadius: 22))
                         }
                     }
                     .padding(16)
@@ -175,18 +172,17 @@ struct WelcomeView: View {
                                             Image(systemName: gameManager.players.contains(where: { $0.id == player.id }) ? "checkmark.circle.fill" : "circle")
                                                 .font(.system(size: 24))
                                                 .foregroundColor(gameManager.players.contains(where: { $0.id == player.id }) ? .orange : .secondary)
+                                                .padding(.leading, 12)
                                             
                                             Text(player.name)
                                                 .font(.system(size: 16, weight: .medium))
+                                                .padding(.vertical, 12)
                                             
                                             Spacer()
                                         }
                                     }
                                     .buttonStyle(.plain)
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 12)
-                                    .background(Color.secondary.opacity(0.05))
-                                    .cornerRadius(10)
+                                    .glassEffect(in: .rect(cornerRadius: 22))
                                 }
                             }
                             .padding(.top, 8)
@@ -198,8 +194,7 @@ struct WelcomeView: View {
                                 .textFieldStyle(.plain)
                                 .font(.system(size: 16))
                                 .padding(12)
-                                .background(Color.secondary.opacity(0.1))
-                                .cornerRadius(10)
+                                .glassEffect(in: .rect(cornerRadius: 22))
                                 .focused($isTextFieldFocused)
                                 .onSubmit {
                                     addPlayer()
