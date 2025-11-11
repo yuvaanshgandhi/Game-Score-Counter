@@ -15,29 +15,32 @@ struct StatisticsView: View {
     }
     
     var body: some View {
-        ZStack {
-            LiquidGlassBackground(color: .orange, intensity: 0.5)
-            
-            if gameHistory.isEmpty {
-                VStack(spacing: 20) {
-                    Image(systemName: "chart.bar.xaxis.ascending")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
-                    
-                    Text("No statistics yet")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.secondary)
-                    
-                    Text("Play some games to see your stats.")
-                        .font(.system(size: 16))
-                        .foregroundColor(.secondary.opacity(0.8))
+        NavigationStack{
+            ZStack {
+                LiquidGlassBackground(color: .orange, intensity: 0.5)
+                
+                if gameHistory.isEmpty {
+                    VStack(spacing: 20) {
+                        Image(systemName: "chart.bar.xaxis.ascending")
+                            .font(.system(size: 60))
+                            .foregroundColor(.secondary)
+                        
+                        Text("No statistics yet")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.secondary)
+                        
+                        Text("Play some games to see your stats.")
+                            .font(.system(size: 16))
+                            .foregroundColor(.secondary.opacity(0.8))
+                    }
+                } else {
+                    globalStatistics
                 }
-            } else {
-                globalStatistics
             }
+            .navigationTitle("Global Statistics")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("Global Statistics")
-        .navigationBarTitleDisplayMode(.inline)
+
     }
     
     private var globalStatistics: some View {
