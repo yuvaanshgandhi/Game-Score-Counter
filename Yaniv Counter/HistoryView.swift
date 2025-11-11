@@ -9,8 +9,6 @@ import SwiftUI
 
 struct HistoryView: View {
     @Bindable var gameManager: GameManager
-    var isPresentedFromScoreboard: Bool = false
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -35,7 +33,7 @@ struct HistoryView: View {
                     ScrollView {
                         VStack(spacing: 16) {
                             // Undo button
-                            if isPresentedFromScoreboard && !gameManager.roundHistory.isEmpty {
+                            if gameManager.gamePhase == .playing && !gameManager.roundHistory.isEmpty {
                                 Button(action: {
                                     withAnimation {
                                         gameManager.undoLastRound()
@@ -80,14 +78,11 @@ struct HistoryView: View {
             .navigationTitle("Round History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: GameStatisticsView(game: Game(players: gameManager.players, targetScore: gameManager.targetScore, roundHistory: gameManager.roundHistory, winner: gameManager.winner))) {
-                        Image(systemName: "chart.bar.xaxis")
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        dismiss()
+                if gameManager.gamePhase == .finished {                         
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: GameStatisticsView(game: Game(players: gameManager.players, targetScore: gameManager.targetScore, roundHistory: gameManager.roundHistory, winner: gameManager.winner))) {
+                            Image(systemName: "chart.bar.xaxis")
+                        }
                     }
                 }
             }

@@ -16,7 +16,6 @@ struct WelcomeView: View {
     @State private var penaltyEnabled: Bool = false
     @State private var penaltyInterval: PenaltyInterval = .fifty
     @State private var penaltyReduction: PenaltyReduction = .fixed(50)
-    @State private var showGameHistory = false
     
     let presetScores = [100, 200, 500, 1000]
     let reductionOptions: [PenaltyReduction] = [.fixed(50), .fixed(100), .half]
@@ -54,49 +53,6 @@ struct WelcomeView: View {
                             .foregroundColor(.secondary)
                     }
                     .padding(.top, 60)
-                    
-                    // Ongoing Games
-                    if !gameManager.ongoingGames.isEmpty {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Ongoing Games")
-                                .font(.system(size: 20, weight: .semibold))
-                            
-                            ForEach(Array(gameManager.ongoingGames.sorted(by: { $0.date > $1.date }).enumerated()), id: \.element.id) { index, game in
-                                Button(action: {
-                                    gameManager.loadGame(game: game)
-                                }) {
-                                    HStack {
-                                        Text("#\(gameManager.ongoingGames.count - index)")
-                                            .font(.system(size: 16, weight: .bold))
-                                            .foregroundColor(.secondary)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text("\(game.players.count) Players")
-                                                .font(.system(size: 16, weight: .medium))
-                                            Text("Target: \(game.targetScore)")
-                                                .font(.system(size: 14, weight: .regular))
-                                                .foregroundColor(.secondary)
-                                            Text(game.players.map { $0.name }.joined(separator: ", "))
-                                                .font(.system(size: 12, weight: .light))
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                        Text("Round \(game.roundHistory.count)")
-                                            .font(.system(size: 14, weight: .regular))
-                                            .foregroundColor(.secondary)
-                                        Image(systemName: "chevron.right")
-                                            .font(.system(size: 14, weight: .semibold))
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
-                                .glassEffect(in: .rect(cornerRadius: 22))
-                            }
-                        }
-                        .padding(16)
-                        .glassEffect(in: .rect(cornerRadius: 22))
-                    }
                     
                     // Target Score Selection
                     VStack(alignment: .leading, spacing: 16) {
@@ -349,24 +305,6 @@ struct WelcomeView: View {
                             .buttonStyle(.plain)
                             .glassEffect(.regular.tint(.orange).interactive())
                         }
-                        
-                        if !gameManager.gameHistory.isEmpty {
-                            Button(action: {
-                                showGameHistory = true
-                            }) {
-                                HStack {
-                                    Image(systemName: "clock.arrow.circlepath")
-                                        .font(.system(size: 18, weight: .semibold))
-                                    Text("History")
-                                        .font(.system(size: 17, weight: .semibold))
-                                }
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                            }
-                            .buttonStyle(.plain)
-                            .glassEffect(in: .capsule)
-                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)
@@ -374,9 +312,6 @@ struct WelcomeView: View {
                 .padding(.horizontal, 20)
             }
             .scrollDismissesKeyboard(.interactively)
-            .sheet(isPresented: $showGameHistory) {
-                GameHistoryView(gameManager: gameManager)
-            }
         }
     }
     

@@ -10,7 +10,6 @@ import SwiftUI
 struct ScoreboardView: View {
     @Bindable var gameManager: GameManager
     @State private var showAddRound = false
-    @State private var showHistory = false
     @State private var showStatistics = false
     @State private var showingEndGameConfirmation = false
     
@@ -110,22 +109,6 @@ struct ScoreboardView: View {
                 // Bottom Action Bar
                 HStack(spacing: 16) {
                     Button(action: {
-                        showHistory = true
-                    }) {
-                        HStack {
-                            Image(systemName: "clock.arrow.circlepath")
-                                .font(.system(size: 18, weight: .semibold))
-                            Text("History")
-                                .font(.system(size: 17, weight: .semibold))
-                        }
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.plain)
-                    .glassEffect(in: .capsule)
-                    
-                    Button(action: {
                         showAddRound = true
                     }) {
                         HStack {
@@ -148,9 +131,6 @@ struct ScoreboardView: View {
         }
         .sheet(isPresented: $showAddRound) {
             AddRoundView(gameManager: gameManager)
-        }
-        .sheet(isPresented: $showHistory) {
-            HistoryView(gameManager: gameManager, isPresentedFromScoreboard: true)
         }
         .sheet(isPresented: $showStatistics) {
             StatisticsView(gameHistory: gameManager.gameHistory)
