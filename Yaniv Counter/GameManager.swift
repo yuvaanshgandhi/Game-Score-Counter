@@ -127,7 +127,7 @@ class GameManager {
                 players[playerIndex].isEliminated = true
             } else if !wasEliminatedBefore {
                 // Player is still active, check for score bonuses
-                if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 {
+                if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 && points > 0 {
                     let reduction: Int
                     switch gameSettings.penaltyReduction {
                     case .fixed(let amount):
