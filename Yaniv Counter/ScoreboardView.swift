@@ -1,16 +1,12 @@
-//
-//  ScoreboardView.swift
-//  Yaniv Counter
-//
-//  Created by Yuvaansh Gandhi on 2025-11-02.
-//
-
 import SwiftUI
+
+public enum ScoreboardDestination {
+    case history, statistics
+}
 
 struct ScoreboardView: View {
     @Bindable var gameManager: GameManager
     @State private var showAddRound = false
-    @State private var showStatistics = false
     @State private var showingEndGameConfirmation = false
     
     var body: some View {
@@ -18,60 +14,6 @@ struct ScoreboardView: View {
             LiquidGlassBackground(color: .orange, intensity: 0.6)
             
             VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 8) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("End of Round \(gameManager.currentRound)")
-                                .font(.system(size: 24, weight: .bold))
-                            
-                            Text("Max Points: \(gameManager.targetScore)")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        Menu {
-                            Button(action: {
-                                gameManager.pauseGame()
-                            }) {
-                                Label("Pause and Go Home", systemImage: "pause.circle")
-                            }
-                            Button(role: .destructive, action: {
-                                showingEndGameConfirmation = true
-                            }) {
-                                Label("End Game", systemImage: "flag.fill")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.system(size: 24))
-                                .foregroundColor(.primary)
-                        }
-                        .alert("End Game?", isPresented: $showingEndGameConfirmation) {
-                            Button("Cancel", role: .cancel) { }
-                            Button("End Game", role: .destructive) {
-                                gameManager.endGame()
-                            }
-                        } message: {
-                            Text("The player with the lowest score will be declared the winner.")
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    
-                    // Active players count
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.2.fill")
-                            .font(.system(size: 14))
-                        Text("\(gameManager.getActivePlayers().count) active")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 16)
-                }
-                
                 // Players List
                 ScrollView {
                     VStack(spacing: 16) {
@@ -100,14 +42,27 @@ struct ScoreboardView: View {
                             }
                             .padding(.top, 8)
                         }
+                        // Header
+                        VStack(spacing: 8) {
+                            // Active players count
+                            HStack(spacing: 4) {
+                                Image(systemName: "person.2.fill")
+                                    .font(.system(size: 14))
+                                Text("\(gameManager.getActivePlayers().count) active")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 16)
+                        }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.top, 20)
+//                    .padding(.top, 20)
                     .padding(.bottom, 100)
                 }
                 
                 // Bottom Action Bar
-                HStack(spacing: 16) {
+                HStack {
                     Button(action: {
                         showAddRound = true
                     }) {
@@ -132,8 +87,58 @@ struct ScoreboardView: View {
         .sheet(isPresented: $showAddRound) {
             AddRoundView(gameManager: gameManager)
         }
-        .sheet(isPresented: $showStatistics) {
-            StatisticsView(gameHistory: gameManager.gameHistory)
+        .navigationDestination(for: ScoreboardDestination.self) { destination in
+            switch destination {
+            case .history:
+                HistoryView(gameManager: gameManager)
+            case .statistics:
+                GameStatisticsView(game: Game(players: gameManager.players, targetScore: gameManager.targetScore, roundHistory: gameManager.roundHistory, winner: gameManager.winner))
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                // Header
+                VStack {
+                    Text("Round \(gameManager.currentRound)")
+                        .font(.system(size: 24, weight: .bold))
+                    Text("Max Points: \(gameManager.targetScore)")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+            }
+            ToolbarItem(placement: .navigationBarLeading) {
+                HStack {
+                    NavigationLink(value: ScoreboardDestination.history) {
+                        Image(systemName: "clock")
+                    }
+                    NavigationLink(value: ScoreboardDestination.statistics) {
+                        Image(systemName: "chart.bar.xaxis")
+                    }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack {
+                    Button(action: {
+                        gameManager.pauseGame()
+                    }) {
+                        Image(systemName: "pause.circle")
+                    }
+                    Button(role: .destructive, action: {
+                        showingEndGameConfirmation = true
+                    }) {
+                        Image(systemName: "flag.fill")
+                            .foregroundColor(.red)
+                    }
+                    .alert("End Game?", isPresented: $showingEndGameConfirmation) {
+                        Button("Cancel", role: .cancel) { }
+                        Button("End Game", role: .destructive) {
+                            gameManager.endGame()
+                        }
+                    } message: {
+                        Text("The player with the lowest score will be declared the winner.")
+                    }
+                }
+            }
         }
     }
 }
@@ -173,8 +178,6 @@ struct PlayerCard: View {
                         }
                     }
                 }
-                
-//                    Spacer()
                 
                 if isRoundWinner {
                     Image(systemName: "trophy.fill")
@@ -231,4 +234,3 @@ struct PlayerCard: View {
     manager.gamePhase = .playing
     return ScoreboardView(gameManager: manager)
 }
-

@@ -11,78 +11,76 @@ struct HistoryView: View {
     @Bindable var gameManager: GameManager
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                LiquidGlassBackground(color: .orange, intensity: 0.5)
-                
-                if gameManager.roundHistory.isEmpty {
-                    VStack(spacing: 20) {
-                        Image(systemName: "clock.badge.xmark")
-                            .font(.system(size: 60))
-                            .foregroundColor(.secondary)
-                        
-                        Text("No rounds yet")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.secondary)
-                        
-                        Text("Start playing to see history")
-                            .font(.system(size: 16))
-                            .foregroundColor(.secondary.opacity(0.8))
-                    }
-                } else {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            // Undo button
-                            if gameManager.gamePhase == .playing && !gameManager.roundHistory.isEmpty {
-                                Button(action: {
-                                    withAnimation {
-                                        gameManager.undoLastRound()
-                                    }
-                                    
-                                    // Haptic feedback
-                                    HapticHelper.impact(.light)
-                                }) {
-                                    HStack {
-                                        Image(systemName: "arrow.uturn.backward")
-                                            .font(.system(size: 16, weight: .semibold))
-                                        Text("Undo Last Round")
-                                            .font(.system(size: 17, weight: .semibold))
-                                    }
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background {
-                                        LinearGradient(
-                                            colors: [.orange, .red],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                        .cornerRadius(12)
-                                    }
+        ZStack {
+            LiquidGlassBackground(color: .orange, intensity: 0.5)
+            
+            if gameManager.roundHistory.isEmpty {
+                VStack(spacing: 20) {
+                    Image(systemName: "clock.badge.xmark")
+                        .font(.system(size: 60))
+                        .foregroundColor(.secondary)
+                    
+                    Text("No rounds yet")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    
+                    Text("Start playing to see history")
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary.opacity(0.8))
+                }
+            } else {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Undo button
+                        if gameManager.gamePhase == .playing && !gameManager.roundHistory.isEmpty {
+                            Button(action: {
+                                withAnimation {
+                                    gameManager.undoLastRound()
                                 }
-                                .padding(.horizontal, 20)
-                                .padding(.top, 20)
+                                
+                                // Haptic feedback
+                                HapticHelper.impact(.light)
+                            }) {
+                                HStack {
+                                    Image(systemName: "arrow.uturn.backward")
+                                        .font(.system(size: 16, weight: .semibold))
+                                    Text("Undo Last Round")
+                                        .font(.system(size: 17, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background {
+                                    LinearGradient(
+                                        colors: [.orange, .red],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                    .cornerRadius(12)
+                                }
                             }
-                            
-                            // History list
-                            ForEach(gameManager.roundHistory.reversed()) { round in
-                                RoundHistoryCard(round: round)
-                                    .padding(.horizontal, 20)
-                            }
-                            
-                            Spacer(minLength: 20)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 20)
                         }
+                        
+                        // History list
+                        ForEach(gameManager.roundHistory.reversed()) { round in
+                            RoundHistoryCard(round: round)
+                                .padding(.horizontal, 20)
+                        }
+                        
+                        Spacer(minLength: 20)
                     }
                 }
             }
-            .navigationTitle("Round History")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if gameManager.gamePhase == .finished {                         
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: GameStatisticsView(game: Game(players: gameManager.players, targetScore: gameManager.targetScore, roundHistory: gameManager.roundHistory, winner: gameManager.winner))) {
-                            Image(systemName: "chart.bar.xaxis")
-                        }
+        }
+        .navigationTitle("Round History")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if gameManager.gamePhase == .finished {                         
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: GameStatisticsView(game: Game(players: gameManager.players, targetScore: gameManager.targetScore, roundHistory: gameManager.roundHistory, winner: gameManager.winner))) {
+                        Image(systemName: "chart.bar.xaxis")
                     }
                 }
             }
