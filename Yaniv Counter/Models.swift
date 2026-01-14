@@ -71,7 +71,7 @@ enum PenaltyInterval: Int, Codable, CaseIterable {
     }
 }
 
-enum PenaltyReduction: Codable, Equatable {
+enum PenaltyReduction: Codable, Equatable, Hashable {
     case fixed(Int)
     case half
     
@@ -131,6 +131,64 @@ struct GameSettings: Codable, Equatable {
         self.gameMode = gameMode
         self.boundaryCondition = boundaryCondition
     }
+}
+
+struct GamePreset: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let icon: String // SF Symbol
+    let targetScore: Int
+    let gameMode: GameMode
+    let boundaryCondition: BoundaryCondition
+    let penaltyEnabled: Bool
+    let penaltyInterval: PenaltyInterval
+    let penaltyReduction: PenaltyReduction
+    
+    static let yaniv = GamePreset(
+        name: "Yaniv",
+        icon: "greetingcard.fill",
+        targetScore: 200,
+        gameMode: .scoreLimitLoses,
+        boundaryCondition: .cross,
+        penaltyEnabled: true,
+        penaltyInterval: .fifty,
+        penaltyReduction: .fixed(50)
+    )
+    
+    static let hearts = GamePreset(
+        name: "Hearts",
+        icon: "suit.heart.fill",
+        targetScore: 100,
+        gameMode: .scoreLimitLoses,
+        boundaryCondition: .reach,
+        penaltyEnabled: false,
+        penaltyInterval: .fifty,
+        penaltyReduction: .fixed(50)
+    )
+    
+    static let uno = GamePreset(
+        name: "Uno",
+        icon: "rectangle.portrait.on.rectangle.portrait.fill",
+        targetScore: 500,
+        gameMode: .scoreLimitWins,
+        boundaryCondition: .reach,
+        penaltyEnabled: false,
+        penaltyInterval: .fifty,
+        penaltyReduction: .fixed(50)
+    )
+    
+     static let ginRummy = GamePreset(
+        name: "Gin Rummy",
+        icon: "crown.fill",
+        targetScore: 100,
+        gameMode: .scoreLimitWins,
+        boundaryCondition: .reach,
+        penaltyEnabled: false,
+        penaltyInterval: .fifty,
+        penaltyReduction: .fixed(50)
+    )
+    
+    static let allPresets: [GamePreset] = [.yaniv, .hearts, .uno, .ginRummy]
 }
 
 enum GameMode: String, Codable, CaseIterable {

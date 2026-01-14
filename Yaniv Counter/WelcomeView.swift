@@ -40,7 +40,7 @@ struct WelcomeView: View {
                                 )
                             )
                         
-                        Text("Yaniv Counter")
+                        Text("Game Counter")
                             .font(.system(size: 42, weight: .bold, design: .rounded))
                             .foregroundStyle(
                                 LinearGradient(
@@ -50,11 +50,57 @@ struct WelcomeView: View {
                                 )
                             )
                         
-                        Text("Track your game scores")
+                        Text("Track your game scores for Yaniv, Uno and more")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundColor(.secondary)
                     }
                     .padding(.top, 60)
+                    
+                    // Game Presets
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Game Presets")
+                            .font(.system(size: 20, weight: .semibold))
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(GamePreset.allPresets) { preset in
+                                    Button(action: {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            applyPreset(preset)
+                                        }
+                                    }) {
+                                        VStack(spacing: 8) {
+                                            Image(systemName: preset.icon)
+                                                .font(.system(size: 24))
+                                                .foregroundColor(.white)
+                                            
+                                            Text(preset.name)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.white)
+                                        }
+                                        .frame(width: 100, height: 90)
+                                        .background(
+                                            ZStack {
+                                                if isPresetSelected(preset) {
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .fill(LinearGradient(colors: [.orange], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                } else {
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .fill(.ultraThinMaterial)
+                                                }
+                                            }
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(.white.opacity(0.1), lineWidth: 1)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, 4) // Slight padding for shadow/glow if needed
+                        }
+                    }
                     
                     // Target Score Selection
                     VStack(alignment: .leading, spacing: 16) {
@@ -362,6 +408,23 @@ struct WelcomeView: View {
     
     private func isReductionSelected(_ current: PenaltyReduction, _ option: PenaltyReduction) -> Bool {
         return current == option
+    }
+
+    private func applyPreset(_ preset: GamePreset) {
+        targetScore = preset.targetScore
+        selectedGameMode = preset.gameMode
+        selectedBoundaryCondition = preset.boundaryCondition
+        penaltyEnabled = preset.penaltyEnabled
+        penaltyInterval = preset.penaltyInterval
+        penaltyReduction = preset.penaltyReduction
+    }
+    
+    private func isPresetSelected(_ preset: GamePreset) -> Bool {
+        return targetScore == preset.targetScore &&
+               selectedGameMode == preset.gameMode &&
+               selectedBoundaryCondition == preset.boundaryCondition &&
+               penaltyEnabled == preset.penaltyEnabled &&
+               (!penaltyEnabled || (penaltyInterval == preset.penaltyInterval && penaltyReduction == preset.penaltyReduction))
     }
 }
 
