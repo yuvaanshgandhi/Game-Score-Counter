@@ -16,6 +16,8 @@ struct WelcomeView: View {
     @State private var penaltyEnabled: Bool = false
     @State private var penaltyInterval: PenaltyInterval = .fifty
     @State private var penaltyReduction: PenaltyReduction = .fixed(50)
+    @State private var selectedGameMode: GameMode = .scoreLimitLoses
+    @State private var selectedBoundaryCondition: BoundaryCondition = .cross
     
     let presetScores = [100, 200, 500, 1000]
     let reductionOptions: [PenaltyReduction] = [.fixed(50), .fixed(100), .half]
@@ -107,6 +109,27 @@ struct WelcomeView: View {
                                 .keyboardType(.numberPad)
                                 .focused($isTextFieldFocused)
                                 .glassEffect(in: .rect(cornerRadius: 22))
+                        }
+                        
+                        // Game Mode Selection
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Win Condition")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                            
+                            Picker("Mode", selection: $selectedGameMode) {
+                                ForEach(GameMode.allCases, id: \.self) { mode in
+                                    Text(mode.displayName).tag(mode)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                            
+                            Picker("Condition", selection: $selectedBoundaryCondition) {
+                                ForEach(BoundaryCondition.allCases, id: \.self) { condition in
+                                    Text(condition.displayName).tag(condition)
+                                }
+                            }
+                            .pickerStyle(.segmented)
                         }
                     }
                     .padding(16)
@@ -284,7 +307,9 @@ struct WelcomeView: View {
                                 let settings = GameSettings(
                                     penaltyEnabled: penaltyEnabled,
                                     penaltyInterval: penaltyInterval,
-                                    penaltyReduction: penaltyReduction
+                                    penaltyReduction: penaltyReduction,
+                                    gameMode: selectedGameMode,
+                                    boundaryCondition: selectedBoundaryCondition
                                 )
                                 gameManager.startNewGame(
                                     targetScore: targetScore,

@@ -38,7 +38,7 @@ class GameManager {
     
     func startNewGame(targetScore: Int, players: [Player], settings: GameSettings = GameSettings()) {
         self.targetScore = targetScore
-        self.players = players.map { Player(id: $0.id, name: $0.name, score: 0, isEliminated: false) }
+        self.players = players.map { Player(id: $0.id, name: $0.name, score: 0, isEliminated: false, completionDate: nil) }
         self.currentRound = 0
         self.gamePhase = .playing
         self.roundHistory = []
@@ -116,43 +116,79 @@ class GameManager {
             var newScore = oldScore + points
             
             // Check if player crosses elimination threshold
-            let crossesEliminationThreshold = !wasEliminatedBefore && newScore > targetScore
+            let crossesEliminationThreshold = !wasEliminatedBefore && checkBoundary(score: newScore, target: targetScore, condition: gameSettings.boundaryCondition)
             
             // Track bonus reduction if applied
             var bonusReduction: Int? = nil
             
-            // If player crosses elimination threshold, eliminate them immediately (no penalties)
-            if crossesEliminationThreshold {
-                players[playerIndex].score = newScore
-                players[playerIndex].isEliminated = true
-            } else if !wasEliminatedBefore {
-                // Player is still active, check for score bonuses
-                if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 && points > 0 {
-                    let reduction: Int
-                    switch gameSettings.penaltyReduction {
-                    case .fixed(let amount):
-                        reduction = amount
-                    case .half:
-                        reduction = newScore / 2
+            // Game Mode Logic
+            if gameSettings.gameMode == .scoreLimitWins {
+                // In "First to [Score] Wins" mode:
+                // - No elimination threshold in the traditional sense (elimination is just "finished")
+                // - If triggered, they finish the race.
+                
+                // Allow bonuses still? Assuming yes.
+                 if !player.isEliminated { // Using isEliminated as "Finished" or "Out of Play" flag
+                    // Player is still active, check for score bonuses
+                     if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 && points > 0 {
+                         let reduction: Int
+                         switch gameSettings.penaltyReduction {
+                         case .fixed(let amount):
+                             reduction = amount
+                         case .half:
+                             reduction = newScore / 2
+                         }
+                         
+                         if reduction > 0 {
+                             bonusReduction = reduction
+                             newScore -= reduction
+                         }
+                     }
+                     players[playerIndex].score = newScore
+                     
+                     // Check if finished
+                     if checkBoundary(score: newScore, target: targetScore, condition: gameSettings.boundaryCondition) {
+                         players[playerIndex].isEliminated = true // Mark as "Finished" (Out of active play)
+                         players[playerIndex].completionDate = Date()
+                     }
+                 }
+                
+            } else {
+                // Standard Yaniv (First to [Score] Loses)
+                
+                // If player crosses elimination threshold, eliminate them immediately (no penalties)
+                if crossesEliminationThreshold {
+                    players[playerIndex].score = newScore
+                    players[playerIndex].isEliminated = true
+                } else if !wasEliminatedBefore {
+                    // Player is still active, check for score bonuses
+                    if gameSettings.penaltyEnabled && newScore > 0 && newScore % gameSettings.penaltyInterval.rawValue == 0 && points > 0 {
+                        let reduction: Int
+                        switch gameSettings.penaltyReduction {
+                        case .fixed(let amount):
+                            reduction = amount
+                        case .half:
+                            reduction = newScore / 2
+                        }
+                        
+                        if reduction > 0 {
+                            bonusReduction = reduction
+                            newScore -= reduction
+                        }
                     }
                     
-                    if reduction > 0 {
-                        bonusReduction = reduction
-                        newScore -= reduction
+                    // Update player score
+                    players[playerIndex].score = newScore
+                    
+                    // Double-check elimination after penalty (in case penalty somehow didn't prevent crossing threshold)
+                    // This should be rare but handles edge cases
+                    if checkBoundary(score: newScore, target: targetScore, condition: gameSettings.boundaryCondition) {
+                        players[playerIndex].isEliminated = true
                     }
+                } else {
+                    // Player was already eliminated, just update score without penalties
+                    players[playerIndex].score = newScore
                 }
-                
-                // Update player score
-                players[playerIndex].score = newScore
-                
-                // Double-check elimination after penalty (in case penalty somehow didn't prevent crossing threshold)
-                // This should be rare but handles edge cases
-                if newScore > targetScore {
-                    players[playerIndex].isEliminated = true
-                }
-            } else {
-                // Player was already eliminated, just update score without penalties
-                players[playerIndex].score = newScore
             }
             
             // Track if elimination happened in this round
@@ -218,22 +254,52 @@ class GameManager {
     }
     
     private func checkGameEnd() {
-        let activePlayers = players.filter { !$0.isEliminated }
-        
-        if activePlayers.count == 1 {
-            gamePhase = .finished
-            winner = activePlayers.first
-            let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
-            gameHistory.append(game)
+        if gameSettings.gameMode == .scoreLimitWins {
+            // "First to [Score] Wins" Logic
             
-            // Haptic feedback for winner
-            HapticHelper.notification(.success)
-        } else if activePlayers.isEmpty {
-            gamePhase = .finished
-            // All players eliminated - use player with lowest score
-            winner = players.min(by: { $0.score < $1.score })
-            let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
-            gameHistory.append(game)
+            let activePlayers = players.filter { !$0.isEliminated }
+            
+            if activePlayers.count <= 1 {
+                let totalPlayers = players.count
+                if (totalPlayers > 1 && activePlayers.count <= 1) || (totalPlayers == 1 && activePlayers.isEmpty) {
+                    
+                    // Winner is the one with EARLIEST completionDate.
+                    let finishedPlayers = players.filter { $0.completionDate != nil }
+                    winner = finishedPlayers.min(by: { $0.completionDate! < $1.completionDate! })
+                    
+                    // If no one finished (edge case?), use score?
+                    if winner == nil {
+                         winner = players.max(by: { $0.score < $1.score }) // Should not happen in this logic path ideally
+                    }
+                    
+                    gamePhase = .finished
+                    
+                    let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+                    gameHistory.append(game)
+                    
+                    HapticHelper.notification(.success)
+                }
+            }
+            
+        } else {
+            // "First to [Score] Loses" Logic (Original Yaniv)
+            let activePlayers = players.filter { !$0.isEliminated }
+            
+            if activePlayers.count == 1 {
+                gamePhase = .finished
+                winner = activePlayers.first
+                let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+                gameHistory.append(game)
+                
+                // Haptic feedback for winner
+                HapticHelper.notification(.success)
+            } else if activePlayers.isEmpty {
+                gamePhase = .finished
+                // All players eliminated - use player with lowest score
+                winner = players.min(by: { $0.score < $1.score })
+                let game = Game(players: players, targetScore: targetScore, roundHistory: roundHistory, winner: winner, gameSettings: gameSettings)
+                gameHistory.append(game)
+            }
         }
     }
     
@@ -248,6 +314,15 @@ class GameManager {
     func deleteGame(_ game: Game) {
         gameHistory.removeAll { $0.id == game.id }
         saveGameState()
+    }
+    
+    private func checkBoundary(score: Int, target: Int, condition: BoundaryCondition) -> Bool {
+        switch condition {
+        case .cross:
+            return score > target
+        case .reach:
+            return score >= target
+        }
     }
     
     // MARK: - Persistence

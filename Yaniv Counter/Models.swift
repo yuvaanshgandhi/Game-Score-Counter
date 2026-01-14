@@ -12,12 +12,14 @@ struct Player: Identifiable, Codable, Equatable {
     var name: String
     var score: Int
     var isEliminated: Bool
+    var completionDate: Date?
     
-    init(id: UUID = UUID(), name: String, score: Int = 0, isEliminated: Bool = false) {
+    init(id: UUID = UUID(), name: String, score: Int = 0, isEliminated: Bool = false, completionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.score = score
         self.isEliminated = isEliminated
+        self.completionDate = completionDate
     }
 }
 
@@ -83,6 +85,18 @@ enum PenaltyReduction: Codable, Equatable {
     }
 }
 
+enum BoundaryCondition: String, Codable, CaseIterable {
+    case cross
+    case reach
+    
+    var displayName: String {
+        switch self {
+        case .cross: return "Cross (>)"
+        case .reach: return "Reach (>=)"
+        }
+    }
+}
+
 struct Game: Identifiable, Codable, Equatable {
     let id: UUID
     let date: Date
@@ -107,11 +121,27 @@ struct GameSettings: Codable, Equatable {
     var penaltyEnabled: Bool = false
     var penaltyInterval: PenaltyInterval = .fifty
     var penaltyReduction: PenaltyReduction = .fixed(50)
+    var gameMode: GameMode = .scoreLimitLoses
+    var boundaryCondition: BoundaryCondition = .cross // Default matches original logic (> target)
     
-    init(penaltyEnabled: Bool = false, penaltyInterval: PenaltyInterval = .fifty, penaltyReduction: PenaltyReduction = .fixed(50)) {
+    init(penaltyEnabled: Bool = false, penaltyInterval: PenaltyInterval = .fifty, penaltyReduction: PenaltyReduction = .fixed(50), gameMode: GameMode = .scoreLimitLoses, boundaryCondition: BoundaryCondition = .cross) {
         self.penaltyEnabled = penaltyEnabled
         self.penaltyInterval = penaltyInterval
         self.penaltyReduction = penaltyReduction
+        self.gameMode = gameMode
+        self.boundaryCondition = boundaryCondition
+    }
+}
+
+enum GameMode: String, Codable, CaseIterable {
+    case scoreLimitLoses
+    case scoreLimitWins
+    
+    var displayName: String {
+        switch self {
+        case .scoreLimitLoses: return "Loses"
+        case .scoreLimitWins: return "Wins"
+        }
     }
 }
 

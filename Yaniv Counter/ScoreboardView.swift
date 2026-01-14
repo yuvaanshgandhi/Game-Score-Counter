@@ -22,21 +22,21 @@ struct ScoreboardView: View {
                         
                         // Active Players
                         ForEach(gameManager.getActivePlayers().sorted(by: { $0.score < $1.score })) { player in
-                            PlayerCard(player: player, targetScore: gameManager.targetScore, isRoundWinner: player.id == roundWinnerId, isRoundLoser: player.id == roundLoserId)
+                            PlayerCard(player: player, targetScore: gameManager.targetScore, isRoundWinner: player.id == roundWinnerId, isRoundLoser: player.id == roundLoserId, gameManager: gameManager)
                                 .transition(.move(edge: .trailing).combined(with: .opacity))
                         }
                         
                         // Eliminated Players
                         if !gameManager.getEliminatedPlayers().isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Eliminated")
+                                Text(gameManager.gameSettings.gameMode == .scoreLimitWins ? "Finished" : "Eliminated")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.secondary)
                                     .padding(.horizontal, 4)
                                     .padding(.top, 8)
                                 
                                 ForEach(gameManager.getEliminatedPlayers().sorted(by: { $0.score < $1.score })) { player in
-                                    PlayerCard(player: player, targetScore: gameManager.targetScore, isEliminated: true)
+                                    PlayerCard(player: player, targetScore: gameManager.targetScore, isEliminated: true, gameManager: gameManager)
                                         .transition(.move(edge: .bottom).combined(with: .opacity))
                                 }
                             }
@@ -149,9 +149,21 @@ struct PlayerCard: View {
     var isEliminated: Bool = false
     var isRoundWinner: Bool = false
     var isRoundLoser: Bool = false
+    var gameManager: GameManager // Pass GameManager to access settings
+
     
     var progress: Double {
         min(Double(player.score) / Double(targetScore + 1), 1.0)
+    }
+    
+    var pointsNeeded: Int {
+        let needed: Int
+        if gameManager.gameSettings.boundaryCondition == .reach {
+             needed = targetScore - player.score
+        } else {
+             needed = targetScore + 1 - player.score
+        }
+        return max(0, needed)
     }
     
     var body: some View {
@@ -162,7 +174,9 @@ struct PlayerCard: View {
                         .font(.system(size: 28))
                         .foregroundStyle(
                             isEliminated
-                                ? LinearGradient(colors: [.red, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                ? (gameManager.gameSettings.gameMode == .scoreLimitWins
+                                   ? LinearGradient(colors: [.green, .mint], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                   : LinearGradient(colors: [.red, .orange], startPoint: .topLeading, endPoint: .bottomTrailing))
                                 : LinearGradient(colors: [.orange], startPoint: .topLeading, endPoint: .bottomTrailing)
                         )
                     
@@ -172,9 +186,15 @@ struct PlayerCard: View {
                             .strikethrough(isEliminated)
                         
                         if isEliminated {
-                            Text("Eliminated")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.red)
+                            if gameManager.gameSettings.gameMode == .scoreLimitWins {
+                                Text("Finished!")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(.green)
+                            } else {
+                                Text("Eliminated")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.red)
+                            }
                         }
                     }
                 }
@@ -205,7 +225,7 @@ struct PlayerCard: View {
                         )
                     
                     if !isEliminated {
-                        Text("\(targetScore + 1 - player.score) to eliminate")
+                        Text("\(pointsNeeded) to \(gameManager.gameSettings.gameMode == .scoreLimitWins ? "win" : "eliminate")")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                     }
