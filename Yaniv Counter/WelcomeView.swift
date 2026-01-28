@@ -30,15 +30,21 @@ struct WelcomeView: View {
                 VStack(spacing: 30) {
                     // Title
                     VStack(spacing: 12) {
-                        Image(systemName: "trophy.fill")
-                            .font(.system(size: 60))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.yellow, .orange],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                        HStack(spacing: 8) {
+                            Image(systemName: "suit.spade.fill")
+                                .foregroundStyle(.black)
+                                .shadow(color: .white, radius: 1)
+                            Image(systemName: "suit.heart.fill")
+                                .foregroundStyle(.red)
+                                .shadow(color: .white, radius: 1)
+                            Image(systemName: "suit.club.fill")
+                                .foregroundStyle(.black)
+                                .shadow(color: .white, radius: 1)
+                            Image(systemName: "suit.diamond.fill")
+                                .foregroundStyle(.red)
+                                .shadow(color: .white, radius: 1)
+                        }
+                        .font(.system(size: 50))
                         
                         Text("Game Counter")
                             .font(.system(size: 42, weight: .bold, design: .rounded))
