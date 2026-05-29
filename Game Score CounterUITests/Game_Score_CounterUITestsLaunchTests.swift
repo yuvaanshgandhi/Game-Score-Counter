@@ -1,13 +1,13 @@
 //
-//  Yaniv_CounterUITestsLaunchTests.swift
-//  Yaniv CounterUITests
+//  Game_Score_CounterUITestsLaunchTests.swift
+//  Game Score CounterUITests
 //
 //  Created by Yuvaansh Gandhi on 2025-11-02.
 //
 
 import XCTest
 
-final class Yaniv_CounterUITestsLaunchTests: XCTestCase {
+final class Game_Score_CounterUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

@@ -1,13 +1,13 @@
 //
-//  Yaniv_CounterUITests.swift
-//  Yaniv CounterUITests
+//  Game_Score_CounterUITests.swift
+//  Game Score CounterUITests
 //
 //  Created by Yuvaansh Gandhi on 2025-11-02.
 //
 
 import XCTest
 
-final class Yaniv_CounterUITests: XCTestCase {
+final class Game_Score_CounterUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

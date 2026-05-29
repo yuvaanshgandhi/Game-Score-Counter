@@ -1,6 +1,6 @@
 //
 //  AddRoundView.swift
-//  Yaniv Counter
+//  Game Score Counter
 //
 //  Created by Yuvaansh Gandhi on 2025-11-02.
 //

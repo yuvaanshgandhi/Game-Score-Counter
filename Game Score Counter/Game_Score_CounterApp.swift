@@ -1,6 +1,6 @@
 //
-//  Yaniv_CounterApp.swift
-//  Yaniv Counter
+//  Game_Score_CounterApp.swift
+//  Game Score Counter
 //
 //  Created by Yuvaansh Gandhi on 2025-11-02.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Yaniv_CounterApp: App {
+struct Game_Score_CounterApp: App {
     @State private var gameManager = GameManager()
     @State private var playerManager = PlayerManager()
     

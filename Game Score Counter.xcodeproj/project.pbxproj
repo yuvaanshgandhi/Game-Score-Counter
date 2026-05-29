@@ -12,37 +12,37 @@
 			containerPortal = BB76954D2EB7CF27009F83C1 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BB7695542EB7CF27009F83C1;
-			remoteInfo = "Yaniv Counter";
+			remoteInfo = "Game Score Counter";
 		};
 		BB76956D2EB7CF2F009F83C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BB76954D2EB7CF27009F83C1 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BB7695542EB7CF27009F83C1;
-			remoteInfo = "Yaniv Counter";
+			remoteInfo = "Game Score Counter";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BB7695552EB7CF27009F83C1 /* Yaniv Counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yaniv Counter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB7695622EB7CF2F009F83C1 /* Yaniv CounterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Yaniv CounterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB76956C2EB7CF2F009F83C1 /* Yaniv CounterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Yaniv CounterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB7695552EB7CF27009F83C1 /* Game Score Counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Game Score Counter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB7695622EB7CF2F009F83C1 /* Game Score CounterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Game Score CounterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB76956C2EB7CF2F009F83C1 /* Game Score CounterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Game Score CounterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BB7695572EB7CF27009F83C1 /* Yaniv Counter */ = {
+		BB7695572EB7CF27009F83C1 /* Game Score Counter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Yaniv Counter";
+			path = "Game Score Counter";
 			sourceTree = "<group>";
 		};
-		BB7695652EB7CF2F009F83C1 /* Yaniv CounterTests */ = {
+		BB7695652EB7CF2F009F83C1 /* Game Score CounterTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Yaniv CounterTests";
+			path = "Game Score CounterTests";
 			sourceTree = "<group>";
 		};
-		BB76956F2EB7CF2F009F83C1 /* Yaniv CounterUITests */ = {
+		BB76956F2EB7CF2F009F83C1 /* Game Score CounterUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Yaniv CounterUITests";
+			path = "Game Score CounterUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		BB76954C2EB7CF27009F83C1 = {
 			isa = PBXGroup;
 			children = (
-				BB7695572EB7CF27009F83C1 /* Yaniv Counter */,
-				BB7695652EB7CF2F009F83C1 /* Yaniv CounterTests */,
-				BB76956F2EB7CF2F009F83C1 /* Yaniv CounterUITests */,
+				BB7695572EB7CF27009F83C1 /* Game Score Counter */,
+				BB7695652EB7CF2F009F83C1 /* Game Score CounterTests */,
+				BB76956F2EB7CF2F009F83C1 /* Game Score CounterUITests */,
 				BB7695562EB7CF27009F83C1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		BB7695562EB7CF27009F83C1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB7695552EB7CF27009F83C1 /* Yaniv Counter.app */,
-				BB7695622EB7CF2F009F83C1 /* Yaniv CounterTests.xctest */,
-				BB76956C2EB7CF2F009F83C1 /* Yaniv CounterUITests.xctest */,
+				BB7695552EB7CF27009F83C1 /* Game Score Counter.app */,
+				BB7695622EB7CF2F009F83C1 /* Game Score CounterTests.xctest */,
+				BB76956C2EB7CF2F009F83C1 /* Game Score CounterUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BB7695542EB7CF27009F83C1 /* Yaniv Counter */ = {
+		BB7695542EB7CF27009F83C1 /* Game Score Counter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB7695762EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv Counter" */;
+			buildConfigurationList = BB7695762EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score Counter" */;
 			buildPhases = (
 				BB7695512EB7CF27009F83C1 /* Sources */,
 				BB7695522EB7CF27009F83C1 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BB7695572EB7CF27009F83C1 /* Yaniv Counter */,
+				BB7695572EB7CF27009F83C1 /* Game Score Counter */,
 			);
-			name = "Yaniv Counter";
+			name = "Game Score Counter";
 			packageProductDependencies = (
 			);
-			productName = "Yaniv Counter";
-			productReference = BB7695552EB7CF27009F83C1 /* Yaniv Counter.app */;
+			productName = "Game Score Counter";
+			productReference = BB7695552EB7CF27009F83C1 /* Game Score Counter.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BB7695612EB7CF2F009F83C1 /* Yaniv CounterTests */ = {
+		BB7695612EB7CF2F009F83C1 /* Game Score CounterTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB7695792EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv CounterTests" */;
+			buildConfigurationList = BB7695792EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score CounterTests" */;
 			buildPhases = (
 				BB76955E2EB7CF2F009F83C1 /* Sources */,
 				BB76955F2EB7CF2F009F83C1 /* Frameworks */,
@@ -131,18 +131,18 @@
 				BB7695642EB7CF2F009F83C1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				BB7695652EB7CF2F009F83C1 /* Yaniv CounterTests */,
+				BB7695652EB7CF2F009F83C1 /* Game Score CounterTests */,
 			);
-			name = "Yaniv CounterTests";
+			name = "Game Score CounterTests";
 			packageProductDependencies = (
 			);
-			productName = "Yaniv CounterTests";
-			productReference = BB7695622EB7CF2F009F83C1 /* Yaniv CounterTests.xctest */;
+			productName = "Game Score CounterTests";
+			productReference = BB7695622EB7CF2F009F83C1 /* Game Score CounterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		BB76956B2EB7CF2F009F83C1 /* Yaniv CounterUITests */ = {
+		BB76956B2EB7CF2F009F83C1 /* Game Score CounterUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB76957C2EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv CounterUITests" */;
+			buildConfigurationList = BB76957C2EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score CounterUITests" */;
 			buildPhases = (
 				BB7695682EB7CF2F009F83C1 /* Sources */,
 				BB7695692EB7CF2F009F83C1 /* Frameworks */,
@@ -154,13 +154,13 @@
 				BB76956E2EB7CF2F009F83C1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				BB76956F2EB7CF2F009F83C1 /* Yaniv CounterUITests */,
+				BB76956F2EB7CF2F009F83C1 /* Game Score CounterUITests */,
 			);
-			name = "Yaniv CounterUITests";
+			name = "Game Score CounterUITests";
 			packageProductDependencies = (
 			);
-			productName = "Yaniv CounterUITests";
-			productReference = BB76956C2EB7CF2F009F83C1 /* Yaniv CounterUITests.xctest */;
+			productName = "Game Score CounterUITests";
+			productReference = BB76956C2EB7CF2F009F83C1 /* Game Score CounterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BB7695502EB7CF27009F83C1 /* Build configuration list for PBXProject "Yaniv Counter" */;
+			buildConfigurationList = BB7695502EB7CF27009F83C1 /* Build configuration list for PBXProject "Game Score Counter" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB7695542EB7CF27009F83C1 /* Yaniv Counter */,
-				BB7695612EB7CF2F009F83C1 /* Yaniv CounterTests */,
-				BB76956B2EB7CF2F009F83C1 /* Yaniv CounterUITests */,
+				BB7695542EB7CF27009F83C1 /* Game Score Counter */,
+				BB7695612EB7CF2F009F83C1 /* Game Score CounterTests */,
+				BB76956B2EB7CF2F009F83C1 /* Game Score CounterUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		BB7695642EB7CF2F009F83C1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BB7695542EB7CF27009F83C1 /* Yaniv Counter */;
+			target = BB7695542EB7CF27009F83C1 /* Game Score Counter */;
 			targetProxy = BB7695632EB7CF2F009F83C1 /* PBXContainerItemProxy */;
 		};
 		BB76956E2EB7CF2F009F83C1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BB7695542EB7CF27009F83C1 /* Yaniv Counter */;
+			target = BB7695542EB7CF27009F83C1 /* Game Score Counter */;
 			targetProxy = BB76956D2EB7CF2F009F83C1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -408,7 +408,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-Counter";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-Counter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -440,7 +440,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-Counter";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-Counter";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -461,7 +461,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-CounterTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-CounterTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -469,7 +469,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yaniv Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Yaniv Counter";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Game Score Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Game Score Counter";
 			};
 			name = Debug;
 		};
@@ -482,7 +482,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-CounterTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-CounterTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -490,7 +490,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yaniv Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Yaniv Counter";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Game Score Counter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Game Score Counter";
 			};
 			name = Release;
 		};
@@ -501,7 +501,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-CounterUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-CounterUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -509,7 +509,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Yaniv Counter";
+				TEST_TARGET_NAME = "Game Score Counter";
 			};
 			name = Debug;
 		};
@@ -520,7 +520,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Yaniv-CounterUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "yuvaanshgandhi.Game-Score-CounterUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -528,14 +528,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Yaniv Counter";
+				TEST_TARGET_NAME = "Game Score Counter";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB7695502EB7CF27009F83C1 /* Build configuration list for PBXProject "Yaniv Counter" */ = {
+		BB7695502EB7CF27009F83C1 /* Build configuration list for PBXProject "Game Score Counter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB7695742EB7CF30009F83C1 /* Debug */,
@@ -544,7 +544,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BB7695762EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv Counter" */ = {
+		BB7695762EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score Counter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB7695772EB7CF30009F83C1 /* Debug */,
@@ -553,7 +553,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BB7695792EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv CounterTests" */ = {
+		BB7695792EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score CounterTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB76957A2EB7CF30009F83C1 /* Debug */,
@@ -562,7 +562,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BB76957C2EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Yaniv CounterUITests" */ = {
+		BB76957C2EB7CF30009F83C1 /* Build configuration list for PBXNativeTarget "Game Score CounterUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB76957D2EB7CF30009F83C1 /* Debug */,
